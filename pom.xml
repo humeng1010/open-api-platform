@@ -10,9 +10,9 @@
         <version>2.7.2</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
-    <groupId>com.yupi</groupId>
+    <groupId>com.panda</groupId>
     <artifactId>panda-api-backend</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.0.1</version>
     <name>panda-api-backend</name>
     <description>胖达api接口后端</description>
     <properties>

@@ -1,7 +1,7 @@
 package com.panda.springbootinit.service.impl;
 
-import static com.panda.springbootinit.constant.UserConstant.USER_LOGIN_STATE;
-
+import cn.hutool.core.util.IdUtil;
+import cn.hutool.core.util.RandomUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -16,10 +16,6 @@ import com.panda.springbootinit.model.vo.LoginUserVO;
 import com.panda.springbootinit.model.vo.UserVO;
 import com.panda.springbootinit.service.UserService;
 import com.panda.springbootinit.utils.SqlUtils;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
-import javax.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.common.bean.WxOAuth2UserInfo;
 import org.apache.commons.lang3.StringUtils;
@@ -27,10 +23,15 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
 
+import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import static com.panda.springbootinit.constant.UserConstant.USER_LOGIN_STATE;
+
 /**
  * 用户服务实现
- *
- 
  */
 @Service
 @Slf4j
@@ -71,6 +72,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             User user = new User();
             user.setUserAccount(userAccount);
             user.setUserPassword(encryptPassword);
+            user.setUserName("panda_" + RandomUtil.randomString(5));
+            user.setUserAvatar("https://img.58tg.com/up/allimg/tx18/021720207805.jpg");
+            user.setAccessKey(IdUtil.simpleUUID());
+            user.setSecretKey(RandomUtil.randomString(18));
             boolean saveResult = this.save(user);
             if (!saveResult) {
                 throw new BusinessException(ErrorCode.SYSTEM_ERROR, "注册失败，数据库错误");

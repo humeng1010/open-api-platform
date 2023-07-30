@@ -25,7 +25,7 @@ create table if not exists user
     index idx_unionId (unionId)
 ) comment '用户' collate = utf8mb4_unicode_ci;
 
-# 新增调用接口的密钥
+# 新增调用接口的密钥 ak sk
 alter table user
     add accessKey varchar(512) not null comment 'accessKey' after userRole;
 
@@ -82,6 +82,7 @@ create table if not exists interface_info
     `description`    varchar(256)                       null comment '描述',
     `url`            varchar(512)                       not null comment '接口地址',
     `requestHeader`  text                               null comment '请求头',
+    `requestParams`  text                               null comment '请求参数',
     `responseHeader` text                               null comment '响应头',
     `status`         int      default 0                 not null comment '接口状态（0-关闭，1-开启）',
     `method`         varchar(256)                       not null comment '请求类型',

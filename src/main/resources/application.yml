@@ -20,7 +20,7 @@ spring:
   # todo 需替换配置
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/panda_api
+    url: jdbc:mysql://localhost:3306/panda_api?serverTimezone=Asia/Shanghai&characterEncoding=utf8&useUnicode=true&useSSL=false
     username: root
     password: 12345678
   # Redis 配置
@@ -42,6 +42,9 @@ spring:
     multipart:
       # 大小限制
       max-file-size: 10MB
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: Asia/Shanghai
 server:
   address: 0.0.0.0
   port: 8101

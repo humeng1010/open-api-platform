@@ -8,9 +8,10 @@ import java.util.Date;
 
 /**
  * 接口信息
+ *
  * @TableName interface_info
  */
-@TableName(value ="interface_info")
+@TableName(value = "interface_info")
 @Data
 public class InterfaceInfo implements Serializable {
     /**
@@ -38,6 +39,11 @@ public class InterfaceInfo implements Serializable {
      * 请求头
      */
     private String requestHeader;
+
+    /**
+     * 请求参数
+     */
+    private String requestParams;
 
     /**
      * 响应头

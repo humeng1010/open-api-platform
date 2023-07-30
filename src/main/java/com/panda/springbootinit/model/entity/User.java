@@ -1,18 +1,13 @@
 package com.panda.springbootinit.model.entity;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableLogic;
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.*;
+import lombok.Data;
+
 import java.io.Serializable;
 import java.util.Date;
-import lombok.Data;
 
 /**
  * 用户
- *
- 
  */
 @TableName(value = "user")
 @Data
@@ -63,6 +58,16 @@ public class User implements Serializable {
      * 用户角色：user/admin/ban
      */
     private String userRole;
+
+    /**
+     * 访问密钥
+     */
+    private String accessKey;
+
+    /**
+     * 安全密钥
+     */
+    private String secretKey;
 
     /**
      * 创建时间

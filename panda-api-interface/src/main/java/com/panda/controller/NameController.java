@@ -14,13 +14,13 @@ import java.util.Objects;
 @RequestMapping("/name")
 public class NameController {
 
-    @GetMapping
+    @GetMapping("/get")
     public String getNameByGet(@RequestParam("name") String name) {
 
         return "GET:你的名字是" + name;
     }
 
-    @PostMapping
+    @PostMapping("/post")
     public String getNameByPost(@RequestParam("name") String name) {
         return "POST:你的名字是" + name;
     }
@@ -45,7 +45,7 @@ public class NameController {
         }
         // TODO 实际是从数据库中取到secretKey
         String secretKey = "abcdefg";
-        
+
         String serverSign = SignUtil.genSign(body, secretKey);
         if (!Objects.equals(serverSign, sign)) {
             throw new RuntimeException("无权限: 签名无效");

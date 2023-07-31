@@ -20,7 +20,7 @@ class PandaApiInterfaceApplicationTests {
     @Test
     void testClient() {
         User user = new User();
-        user.setUsername("pandas");
+        user.setUsername("安保");
         String res = pandaApiClient.getNameByPost(user);
         System.out.println("res = " + res);
     }

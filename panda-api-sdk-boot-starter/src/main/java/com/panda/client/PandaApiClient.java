@@ -9,6 +9,7 @@ import com.panda.model.entity.User;
 import com.panda.utils.SignUtil;
 import lombok.extern.slf4j.Slf4j;
 
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -22,6 +23,8 @@ public class PandaApiClient {
 
     private String secretKey;
 
+    public static final String GATEWAY_HOST = "http://localhost:8090";
+
 
     public PandaApiClient(String accessKey, String secretKey) {
         this.accessKey = accessKey;
@@ -31,7 +34,7 @@ public class PandaApiClient {
     public String getNameByGet(String name) {
         HashMap<String, Object> params = new HashMap<>();
         params.put("name", "张三");
-        String result = HttpUtil.get("http://localhost:8123/api/name", params);
+        String result = HttpUtil.get(GATEWAY_HOST + "/api/name", params);
         log.info("结果:{}", result);
         return result;
     }
@@ -39,7 +42,7 @@ public class PandaApiClient {
     public String getNameByPost(String name) {
         HashMap<String, Object> params = new HashMap<>();
         params.put("name", "张三");
-        String result = HttpUtil.post("http://localhost:8123/api/name", params);
+        String result = HttpUtil.post(GATEWAY_HOST + "/api/name", params);
         log.info("结果:{}", result);
         return result;
     }
@@ -61,9 +64,10 @@ public class PandaApiClient {
 
     public String getNameByPost(User user) {
         String json = JSONUtil.toJsonStr(user);
-        HttpResponse httpResponse = HttpRequest.post("http://localhost:8123/api/name/user")
+        HttpResponse httpResponse = HttpRequest.post(GATEWAY_HOST + "/api/name/user")
+                .charset(StandardCharsets.UTF_8)
                 .body(json)
-                .addHeaders(getRequestHeaderMap("body-info"))
+                .addHeaders(getRequestHeaderMap(json))
                 .execute();
         log.info("状态码:{};响应体:{}", httpResponse.getStatus(), httpResponse.body());
         return httpResponse.body();

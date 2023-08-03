@@ -2,8 +2,6 @@ package com.panda.springbootinit.common;
 
 /**
  * 返回工具类
- *
- 
  */
 public class ResultUtils {
 

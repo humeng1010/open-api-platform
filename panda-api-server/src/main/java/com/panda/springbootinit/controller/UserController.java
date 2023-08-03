@@ -6,7 +6,6 @@ import com.panda.springbootinit.common.BaseResponse;
 import com.panda.springbootinit.common.DeleteRequest;
 import com.panda.springbootinit.common.ErrorCode;
 import com.panda.springbootinit.common.ResultUtils;
-import com.panda.springbootinit.config.WxOpenConfig;
 import com.panda.springbootinit.constant.UserConstant;
 import com.panda.springbootinit.exception.BusinessException;
 import com.panda.springbootinit.exception.ThrowUtils;

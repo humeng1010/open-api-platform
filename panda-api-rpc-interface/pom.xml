@@ -4,14 +4,13 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.panda</groupId>
-    <artifactId>panda-api-rpc-interface</artifactId>
-    <version>0.0.1</version>
+    <parent>
+        <artifactId>panda-api-backend</artifactId>
+        <groupId>com.panda</groupId>
+        <version>0.0.1</version>
+    </parent>
 
-    <properties>
-        <maven.compiler.source>8</maven.compiler.source>
-        <maven.compiler.target>8</maven.compiler.target>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    </properties>
+    <artifactId>panda-api-rpc-interface</artifactId>
+
 
 </project>

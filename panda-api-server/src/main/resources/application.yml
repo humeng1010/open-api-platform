@@ -45,6 +45,11 @@ spring:
   jackson:
     date-format: yyyy-MM-dd HH:mm:ss
     time-zone: Asia/Shanghai
+  cloud:
+    nacos:
+      discovery:
+        server-addr: localhost:8848
+
 server:
   address: 0.0.0.0
   port: 8101
@@ -96,13 +101,19 @@ panda:
   client:
     access-key: panda
     secret-key: abcdefg
+
 dubbo:
+  metadata-report:
+    address: nacos://127.0.0.1:8848
   application:
     name: dubbo-springboot-demo-provider
-  protocol:
-    name: dubbo
-    port: -1
-  registry:
-    id: nacos-registry
-    address: nacos://localhost:8848
+#dubbo:
+#  application:
+#    name: dubbo-springboot-demo-provider
+#  protocol:
+#    name: dubbo
+#    port: -1
+#  registry:
+#    id: nacos-registry
+#    address: nacos://localhost:8848
 

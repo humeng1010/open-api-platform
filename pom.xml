@@ -29,7 +29,7 @@
         <spring.version>2.7.2</spring.version>
         <spring-cloud.version>2021.0.8</spring-cloud.version>
         <spring-cloud-alibaba.version>2021.0.4.0</spring-cloud-alibaba.version>
-        <dubbo.version>3.2.0-beta.4</dubbo.version>
+        <dubbo.version>3.2.5</dubbo.version>
     </properties>
     <dependencyManagement>
         <dependencies>

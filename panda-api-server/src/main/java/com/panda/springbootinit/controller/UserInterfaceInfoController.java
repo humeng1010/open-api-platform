@@ -16,10 +16,7 @@ import com.panda.springbootinit.service.UserInterfaceInfoService;
 import com.panda.springbootinit.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -30,6 +27,8 @@ import javax.servlet.http.HttpServletRequest;
 @RestController
 @RequestMapping("/user_interfaceInfo")
 @Slf4j
+@CrossOrigin
+
 public class UserInterfaceInfoController {
 
     @Resource

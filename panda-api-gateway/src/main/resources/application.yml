@@ -20,9 +20,9 @@ dubbo:
     address: nacos://127.0.0.1:8848
   application:
     name: panda-api-gateway
-    qos-enable: true
-    qos-port: 33333
-    qos-accept-foreign-ip: false
+  #    qos-enable: true
+  #    qos-port: 33333
+  #    qos-accept-foreign-ip: false
   protocol:
     name: dubbo
     port: -1

@@ -17,11 +17,10 @@ public class InnerUserServiceImpl implements InnerUserService {
     private UserService userService;
 
     @Override
-    public User getInvokeUser(String accessKey, String secretKey) {
-        if (StringUtils.isAnyBlank(accessKey, secretKey)) {
+    public User getInvokeUser(String accessKey) {
+        if (StringUtils.isAnyBlank(accessKey)) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
-        return userService.query().eq("accessKey", accessKey)
-                .eq("secretKey", secretKey).one();
+        return userService.query().eq("accessKey", accessKey).one();
     }
 }

@@ -5,7 +5,7 @@ import cn.hutool.http.HttpRequest;
 import cn.hutool.http.HttpResponse;
 import cn.hutool.http.HttpUtil;
 import cn.hutool.json.JSONUtil;
-import com.panda.common.model.entity.User;
+import com.panda.model.entity.User;
 import com.panda.utils.SignUtil;
 import lombok.extern.slf4j.Slf4j;
 
@@ -19,9 +19,9 @@ import java.util.Map;
 @Slf4j
 public class PandaApiClient {
 
-    private String accessKey;
+    private final String accessKey;
 
-    private String secretKey;
+    private final String secretKey;
 
     public static final String GATEWAY_HOST = "http://localhost:8090";
 
@@ -54,7 +54,7 @@ public class PandaApiClient {
         // header.put("secretKey", secretKey);
         header.put("nonce", RandomUtil.randomNumbers(5));
         header.put("body", body);
-        header.put("timestamp", String.valueOf(System.currentTimeMillis() / 1000));
+        header.put("timestamp", String.valueOf(System.currentTimeMillis()));
         // 使用加密算法加密密钥
         header.put("sign", SignUtil.genSign(body, secretKey));
 

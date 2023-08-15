@@ -1,14 +1,9 @@
 package com.panda.controller;
 
-import cn.hutool.core.date.LocalDateTimeUtil;
 import com.panda.model.entity.User;
-import com.panda.utils.SignUtil;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import java.time.LocalDateTime;
-import java.util.Date;
-import java.util.Objects;
 
 @RestController
 @RequestMapping("/name")
@@ -27,7 +22,9 @@ public class NameController {
 
     @PostMapping("/user")
     public String getNameByPost(@RequestBody User user, HttpServletRequest request) {
-        String accessKey = request.getHeader("accessKey");
+        // 统一迁移到网关Gateway做校验
+
+        /*String accessKey = request.getHeader("accessKey");
         String nonce = request.getHeader("nonce");
         String timestamp = request.getHeader("timestamp");
         String sign = request.getHeader("sign");
@@ -49,9 +46,8 @@ public class NameController {
         String serverSign = SignUtil.genSign(body, secretKey);
         if (!Objects.equals(serverSign, sign)) {
             throw new RuntimeException("无权限: 签名无效");
-        }
-
-
-        return "POST-request-body:你的名字是" + user.getUsername();
+        }*/
+        
+        return "POST-request-body:你的名字是" + user.getName();
     }
 }

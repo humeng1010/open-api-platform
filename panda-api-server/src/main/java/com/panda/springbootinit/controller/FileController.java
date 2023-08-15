@@ -8,10 +8,7 @@ import com.panda.common.model.dto.file.UploadFileRequest;
 import com.panda.common.model.enums.FileUploadBizEnum;
 import com.panda.springbootinit.exception.BusinessException;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
@@ -23,6 +20,8 @@ import java.util.Arrays;
 @RestController
 @RequestMapping("/file")
 @Slf4j
+@CrossOrigin
+
 public class FileController {
 
     /**

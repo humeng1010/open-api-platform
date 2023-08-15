@@ -36,6 +36,7 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/interfaceInfo")
 @Slf4j
+@CrossOrigin
 public class InterfaceInfoController {
 
     @Resource
@@ -179,8 +180,8 @@ public class InterfaceInfoController {
         ThrowUtils.throwIf(oldInterfaceInfo == null, ErrorCode.NOT_FOUND_ERROR);
 
         // TODO 下面是固定的,将来需要根据url进行调用,判断是否可以调用
-        User user = new User();
-        user.setUserName("pandas");
+        com.panda.model.entity.User user = new com.panda.model.entity.User();
+        user.setName("pandas");
         String res = pandaApiClient.getNameByPost(user);
 
         if (StrUtil.isBlank(res)) {
@@ -254,7 +255,7 @@ public class InterfaceInfoController {
         // TODO 优化调用具体的接口
         try {
             PandaApiClient tempClient = new PandaApiClient(accessKey, secretKey);
-            User user = JSONUtil.toBean(userRequestParams, User.class);
+            com.panda.model.entity.User user = JSONUtil.toBean(userRequestParams, com.panda.model.entity.User.class, false);
             String result = tempClient.getNameByPost(user);
             return ResultUtils.success(result);
         } catch (Exception e) {

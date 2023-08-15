@@ -1,17 +1,17 @@
 package com.panda.springbootinit.controller;
 
+import com.panda.common.common.BaseResponse;
+import com.panda.common.common.DeleteRequest;
+import com.panda.common.common.ErrorCode;
+import com.panda.common.common.ResultUtils;
+import com.panda.common.constant.UserConstant;
+import com.panda.common.model.dto.userInterfaceInfo.UserInterfaceInfoAddRequest;
+import com.panda.common.model.dto.userInterfaceInfo.UserInterfaceInfoUpdateRequest;
+import com.panda.common.model.entity.User;
+import com.panda.common.model.entity.UserInterfaceInfo;
 import com.panda.springbootinit.annotation.AuthCheck;
-import com.panda.springbootinit.common.BaseResponse;
-import com.panda.springbootinit.common.DeleteRequest;
-import com.panda.springbootinit.common.ErrorCode;
-import com.panda.springbootinit.common.ResultUtils;
-import com.panda.springbootinit.constant.UserConstant;
 import com.panda.springbootinit.exception.BusinessException;
 import com.panda.springbootinit.exception.ThrowUtils;
-import com.panda.springbootinit.model.dto.userInterfaceInfo.UserInterfaceInfoAddRequest;
-import com.panda.springbootinit.model.dto.userInterfaceInfo.UserInterfaceInfoUpdateRequest;
-import com.panda.springbootinit.model.entity.User;
-import com.panda.springbootinit.model.entity.UserInterfaceInfo;
 import com.panda.springbootinit.service.UserInterfaceInfoService;
 import com.panda.springbootinit.service.UserService;
 import lombok.extern.slf4j.Slf4j;

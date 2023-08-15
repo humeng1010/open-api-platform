@@ -5,19 +5,19 @@ import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.panda.client.PandaApiClient;
+import com.panda.common.common.*;
+import com.panda.common.constant.UserConstant;
+import com.panda.common.model.dto.interfaceInfo.InterfaceInfoAddRequest;
+import com.panda.common.model.dto.interfaceInfo.InterfaceInfoInvokeRequest;
+import com.panda.common.model.dto.interfaceInfo.InterfaceInfoQueryRequest;
+import com.panda.common.model.dto.interfaceInfo.InterfaceInfoUpdateRequest;
+import com.panda.common.model.entity.InterfaceInfo;
+import com.panda.common.model.entity.User;
+import com.panda.common.model.enums.InterfaceInfoStatusEnum;
+import com.panda.common.model.vo.InterfaceInfoVO;
 import com.panda.springbootinit.annotation.AuthCheck;
-import com.panda.springbootinit.common.*;
-import com.panda.springbootinit.constant.UserConstant;
 import com.panda.springbootinit.exception.BusinessException;
 import com.panda.springbootinit.exception.ThrowUtils;
-import com.panda.springbootinit.model.dto.interfaceInfo.InterfaceInfoAddRequest;
-import com.panda.springbootinit.model.dto.interfaceInfo.InterfaceInfoInvokeRequest;
-import com.panda.springbootinit.model.dto.interfaceInfo.InterfaceInfoQueryRequest;
-import com.panda.springbootinit.model.dto.interfaceInfo.InterfaceInfoUpdateRequest;
-import com.panda.springbootinit.model.entity.InterfaceInfo;
-import com.panda.springbootinit.model.entity.User;
-import com.panda.springbootinit.model.enums.InterfaceInfoStatusEnum;
-import com.panda.springbootinit.model.vo.InterfaceInfoVO;
 import com.panda.springbootinit.service.InterfaceInfoService;
 import com.panda.springbootinit.service.UserService;
 import lombok.extern.slf4j.Slf4j;
@@ -179,8 +179,8 @@ public class InterfaceInfoController {
         ThrowUtils.throwIf(oldInterfaceInfo == null, ErrorCode.NOT_FOUND_ERROR);
 
         // TODO 下面是固定的,将来需要根据url进行调用,判断是否可以调用
-        com.panda.model.entity.User user = new com.panda.model.entity.User();
-        user.setUsername("pandas");
+        User user = new User();
+        user.setUserName("pandas");
         String res = pandaApiClient.getNameByPost(user);
 
         if (StrUtil.isBlank(res)) {
@@ -254,7 +254,7 @@ public class InterfaceInfoController {
         // TODO 优化调用具体的接口
         try {
             PandaApiClient tempClient = new PandaApiClient(accessKey, secretKey);
-            com.panda.model.entity.User user = JSONUtil.toBean(userRequestParams, com.panda.model.entity.User.class);
+            User user = JSONUtil.toBean(userRequestParams, User.class);
             String result = tempClient.getNameByPost(user);
             return ResultUtils.success(result);
         } catch (Exception e) {

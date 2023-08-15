@@ -14,10 +14,6 @@
 
     <dependencies>
 
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-freemarker</artifactId>
-        </dependency>
         <!--web-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -34,6 +30,11 @@
         <dependency>
             <groupId>com.panda</groupId>
             <artifactId>panda-api-sdk-boot-starter</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.panda</groupId>
+            <artifactId>panda-api-common</artifactId>
         </dependency>
 
         <!--nacos注册中心-->
@@ -83,10 +84,10 @@
         </dependency>
 
         <!--api文档-->
-        <!--<dependency>-->
-        <!--    <groupId>com.github.xiaoymin</groupId>-->
-        <!--    <artifactId>knife4j-spring-boot-starter</artifactId>-->
-        <!--</dependency>-->
+        <dependency>
+            <groupId>com.github.xiaoymin</groupId>
+            <artifactId>knife4j-spring-boot-starter</artifactId>
+        </dependency>
 
 
         <!-- https://mvnrepository.com/artifact/org.apache.commons/commons-lang3 -->

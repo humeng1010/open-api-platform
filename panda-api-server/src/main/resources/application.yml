@@ -5,9 +5,9 @@ spring:
   profiles:
     active: dev
   # 支持 swagger3
-  #  mvc:
-  #    pathmatch:
-  #      matching-strategy: ant_path_matcher
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
   # session 配置
   session:
     store-type: redis
@@ -66,6 +66,7 @@ mybatis-plus:
       logic-delete-field: isDelete # 全局逻辑删除的实体字段名
       logic-delete-value: 1 # 逻辑已删除值（默认为 1）
       logic-not-delete-value: 0 # 逻辑未删除值（默认为 0）
+  type-aliases-package: com.panda.common.model.entity
 
 # AK SK
 panda:
@@ -73,13 +74,4 @@ panda:
     access-key: panda
     secret-key: abcdefg
 
-#dubbo:
-#  application:
-#    name: dubbo-springboot-demo-provider
-#  protocol:
-#    name: dubbo
-#    port: -1
-#  registry:
-#    id: nacos-registry
-#    address: nacos://localhost:8848
 

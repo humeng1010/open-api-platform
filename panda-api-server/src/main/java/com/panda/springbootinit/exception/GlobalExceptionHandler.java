@@ -1,8 +1,8 @@
 package com.panda.springbootinit.exception;
 
-import com.panda.springbootinit.common.BaseResponse;
-import com.panda.springbootinit.common.ErrorCode;
-import com.panda.springbootinit.common.ResultUtils;
+import com.panda.common.common.BaseResponse;
+import com.panda.common.common.ErrorCode;
+import com.panda.common.common.ResultUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;

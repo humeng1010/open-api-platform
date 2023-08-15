@@ -1,6 +1,7 @@
 package com.panda.springbootinit.exception;
 
-import com.panda.springbootinit.common.ErrorCode;
+
+import com.panda.common.common.ErrorCode;
 
 /**
  * 自定义异常类

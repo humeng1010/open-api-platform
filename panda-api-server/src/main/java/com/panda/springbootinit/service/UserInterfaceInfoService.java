@@ -1,7 +1,7 @@
 package com.panda.springbootinit.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.panda.springbootinit.model.entity.UserInterfaceInfo;
+import com.panda.common.model.entity.UserInterfaceInfo;
 
 /**
  * @author humeng
@@ -12,5 +12,4 @@ public interface UserInterfaceInfoService extends IService<UserInterfaceInfo> {
 
     void validUserInterfaceInfo(UserInterfaceInfo userInterfaceInfo, boolean save);
 
-    boolean invokeCount(long interfaceInfoId, long userId);
 }

@@ -2,8 +2,8 @@ package com.panda.springbootinit.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.panda.springbootinit.model.dto.interfaceInfo.InterfaceInfoQueryRequest;
-import com.panda.springbootinit.model.entity.InterfaceInfo;
+import com.panda.common.model.dto.interfaceInfo.InterfaceInfoQueryRequest;
+import com.panda.common.model.entity.InterfaceInfo;
 
 
 /**

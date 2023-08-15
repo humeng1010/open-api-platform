@@ -1,12 +1,12 @@
 package com.panda.springbootinit.controller;
 
 import cn.hutool.core.io.FileUtil;
-import com.panda.springbootinit.common.BaseResponse;
-import com.panda.springbootinit.common.ErrorCode;
-import com.panda.springbootinit.common.ResultUtils;
+import com.panda.common.common.BaseResponse;
+import com.panda.common.common.ErrorCode;
+import com.panda.common.common.ResultUtils;
+import com.panda.common.model.dto.file.UploadFileRequest;
+import com.panda.common.model.enums.FileUploadBizEnum;
 import com.panda.springbootinit.exception.BusinessException;
-import com.panda.springbootinit.model.dto.file.UploadFileRequest;
-import com.panda.springbootinit.model.enums.FileUploadBizEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;

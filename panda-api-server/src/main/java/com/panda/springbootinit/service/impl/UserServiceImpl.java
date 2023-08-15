@@ -5,15 +5,15 @@ import cn.hutool.core.util.RandomUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.panda.springbootinit.common.ErrorCode;
-import com.panda.springbootinit.constant.CommonConstant;
+import com.panda.common.common.ErrorCode;
+import com.panda.common.constant.CommonConstant;
+import com.panda.common.model.dto.user.UserQueryRequest;
+import com.panda.common.model.entity.User;
+import com.panda.common.model.enums.UserRoleEnum;
+import com.panda.common.model.vo.LoginUserVO;
+import com.panda.common.model.vo.UserVO;
 import com.panda.springbootinit.exception.BusinessException;
 import com.panda.springbootinit.mapper.UserMapper;
-import com.panda.springbootinit.model.dto.user.UserQueryRequest;
-import com.panda.springbootinit.model.entity.User;
-import com.panda.springbootinit.model.enums.UserRoleEnum;
-import com.panda.springbootinit.model.vo.LoginUserVO;
-import com.panda.springbootinit.model.vo.UserVO;
 import com.panda.springbootinit.service.UserService;
 import com.panda.springbootinit.utils.SqlUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -27,7 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.panda.springbootinit.constant.UserConstant.USER_LOGIN_STATE;
+import static com.panda.common.constant.UserConstant.USER_LOGIN_STATE;
 
 
 @Service

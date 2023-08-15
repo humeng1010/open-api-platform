@@ -5,7 +5,7 @@ import cn.hutool.http.HttpRequest;
 import cn.hutool.http.HttpResponse;
 import cn.hutool.http.HttpUtil;
 import cn.hutool.json.JSONUtil;
-import com.panda.model.entity.User;
+import com.panda.common.model.entity.User;
 import com.panda.utils.SignUtil;
 import lombok.extern.slf4j.Slf4j;
 

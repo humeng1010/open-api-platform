@@ -2,10 +2,10 @@ package com.panda.springbootinit.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.panda.springbootinit.model.dto.user.UserQueryRequest;
-import com.panda.springbootinit.model.entity.User;
-import com.panda.springbootinit.model.vo.LoginUserVO;
-import com.panda.springbootinit.model.vo.UserVO;
+import com.panda.common.model.dto.user.UserQueryRequest;
+import com.panda.common.model.entity.User;
+import com.panda.common.model.vo.LoginUserVO;
+import com.panda.common.model.vo.UserVO;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;

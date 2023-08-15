@@ -1,10 +1,10 @@
 package com.panda.springbootinit.aop;
 
+import com.panda.common.common.ErrorCode;
+import com.panda.common.model.entity.User;
+import com.panda.common.model.enums.UserRoleEnum;
 import com.panda.springbootinit.annotation.AuthCheck;
-import com.panda.springbootinit.common.ErrorCode;
 import com.panda.springbootinit.exception.BusinessException;
-import com.panda.springbootinit.model.entity.User;
-import com.panda.springbootinit.model.enums.UserRoleEnum;
 import com.panda.springbootinit.service.UserService;
 import org.apache.commons.lang3.StringUtils;
 import org.aspectj.lang.ProceedingJoinPoint;

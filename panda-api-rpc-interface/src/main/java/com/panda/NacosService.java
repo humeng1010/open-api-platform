@@ -2,5 +2,5 @@ package com.panda;
 
 
 public interface NacosService {
-    void sayHello();
+    String sayHello(String name);
 }

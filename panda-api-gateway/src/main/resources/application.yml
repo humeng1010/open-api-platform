@@ -2,6 +2,8 @@ server:
   port: 8090
 
 spring:
+  application:
+    name: panda-api-gateway
   cloud:
     gateway:
       routes:
@@ -12,11 +14,15 @@ spring:
             - Path=/api/**
     nacos:
       discovery:
-        server-addr: localhost:8848
-  application:
-    name: panda-api-gateway
+        server-addr: 127.0.0.1:8848
 dubbo:
-  metadata-report:
+  registry:
     address: nacos://127.0.0.1:8848
   application:
-    name: dubbo-springboot-demo-consumer
+    name: panda-api-gateway
+    qos-enable: true
+    qos-port: 33333
+    qos-accept-foreign-ip: false
+  protocol:
+    name: dubbo
+    port: -1

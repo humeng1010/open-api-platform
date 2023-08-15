@@ -15,11 +15,7 @@ import com.panda.springbootinit.utils.SqlUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
-/**
- * @author humeng
- * @description 针对表【interface_info(接口信息)】的数据库操作Service实现
- * @createDate 2023-07-23 14:37:54
- */
+
 @Service
 public class InterfaceInfoServiceImpl extends ServiceImpl<InterfaceInfoMapper, InterfaceInfo>
         implements InterfaceInfoService {

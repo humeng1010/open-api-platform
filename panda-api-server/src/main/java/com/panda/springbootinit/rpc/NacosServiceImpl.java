@@ -6,7 +6,7 @@ import org.apache.dubbo.config.annotation.DubboService;
 @DubboService
 public class NacosServiceImpl implements NacosService {
     @Override
-    public void sayHello() {
-        System.out.println("hello nacos & dubbo");
+    public String sayHello(String name) {
+        return "hello " + name;
     }
 }

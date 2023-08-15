@@ -4,24 +4,17 @@ import cn.hutool.core.io.FileUtil;
 import com.panda.springbootinit.common.BaseResponse;
 import com.panda.springbootinit.common.ErrorCode;
 import com.panda.springbootinit.common.ResultUtils;
-import com.panda.springbootinit.constant.FileConstant;
 import com.panda.springbootinit.exception.BusinessException;
-import com.panda.springbootinit.manager.CosManager;
 import com.panda.springbootinit.model.dto.file.UploadFileRequest;
-import com.panda.springbootinit.model.entity.User;
 import com.panda.springbootinit.model.enums.FileUploadBizEnum;
-import com.panda.springbootinit.service.UserService;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import java.io.File;
 import java.util.Arrays;
 
 /**
@@ -31,12 +24,6 @@ import java.util.Arrays;
 @RequestMapping("/file")
 @Slf4j
 public class FileController {
-
-    @Resource
-    private UserService userService;
-
-    @Resource
-    private CosManager cosManager;
 
     /**
      * 文件上传
@@ -49,37 +36,7 @@ public class FileController {
     @PostMapping("/upload")
     public BaseResponse<String> uploadFile(@RequestPart("file") MultipartFile multipartFile,
                                            UploadFileRequest uploadFileRequest, HttpServletRequest request) {
-        String biz = uploadFileRequest.getBiz();
-        FileUploadBizEnum fileUploadBizEnum = FileUploadBizEnum.getEnumByValue(biz);
-        if (fileUploadBizEnum == null) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR);
-        }
-        validFile(multipartFile, fileUploadBizEnum);
-        User loginUser = userService.getLoginUser(request);
-        // 文件目录：根据业务、用户来划分
-        String uuid = RandomStringUtils.randomAlphanumeric(8);
-        String filename = uuid + "-" + multipartFile.getOriginalFilename();
-        String filepath = String.format("/%s/%s/%s", fileUploadBizEnum.getValue(), loginUser.getId(), filename);
-        File file = null;
-        try {
-            // 上传文件
-            file = File.createTempFile(filepath, null);
-            multipartFile.transferTo(file);
-            cosManager.putObject(filepath, file);
-            // 返回可访问地址
-            return ResultUtils.success(FileConstant.COS_HOST + filepath);
-        } catch (Exception e) {
-            log.error("file upload error, filepath = " + filepath, e);
-            throw new BusinessException(ErrorCode.SYSTEM_ERROR, "上传失败");
-        } finally {
-            if (file != null) {
-                // 删除临时文件
-                boolean delete = file.delete();
-                if (!delete) {
-                    log.error("file delete error, filepath = {}", filepath);
-                }
-            }
-        }
+        return ResultUtils.success("上传功能开发中");
     }
 
     /**

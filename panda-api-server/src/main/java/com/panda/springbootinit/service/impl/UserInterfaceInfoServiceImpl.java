@@ -8,11 +8,7 @@ import com.panda.springbootinit.model.entity.UserInterfaceInfo;
 import com.panda.springbootinit.service.UserInterfaceInfoService;
 import org.springframework.stereotype.Service;
 
-/**
- * @author humeng
- * @description 针对表【user_interface_info(用户调用接口关系)】的数据库操作Service实现
- * @createDate 2023-07-30 22:08:25
- */
+
 @Service
 public class UserInterfaceInfoServiceImpl extends ServiceImpl<UserInterfaceInfoMapper, UserInterfaceInfo>
         implements UserInterfaceInfoService {

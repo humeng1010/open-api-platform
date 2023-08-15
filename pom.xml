@@ -64,19 +64,6 @@
             </dependency>
 
 
-            <!-- https://mvnrepository.com/artifact/org.apache.dubbo/dubbo -->
-            <dependency>
-                <groupId>org.apache.dubbo</groupId>
-                <artifactId>dubbo</artifactId>
-                <version>3.0.9</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.alibaba.nacos</groupId>
-                <artifactId>nacos-client</artifactId>
-                <version>2.1.1</version>
-            </dependency>
-
             <dependency>
                 <groupId>com.panda</groupId>
                 <artifactId>panda-api-rpc-interface</artifactId>
@@ -96,12 +83,6 @@
                 <version>3.5.2</version>
             </dependency>
 
-            <!-- https://mvnrepository.com/artifact/com.github.binarywang/wx-java-mp-spring-boot-starter -->
-            <dependency>
-                <groupId>com.github.binarywang</groupId>
-                <artifactId>wx-java-mp-spring-boot-starter</artifactId>
-                <version>4.4.0</version>
-            </dependency>
 
             <!-- https://doc.xiaominfo.com/knife4j/documentation/get_start.html-->
             <dependency>
@@ -117,12 +98,6 @@
                 <version>0.0.1</version>
             </dependency>
 
-            <!-- https://cloud.tencent.com/document/product/436/10199-->
-            <dependency>
-                <groupId>com.qcloud</groupId>
-                <artifactId>cos_api</artifactId>
-                <version>5.6.89</version>
-            </dependency>
 
             <!-- https://mvnrepository.com/artifact/com.google.code.gson/gson -->
             <dependency>

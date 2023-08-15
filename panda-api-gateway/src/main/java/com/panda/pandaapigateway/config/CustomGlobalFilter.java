@@ -1,10 +1,8 @@
 package com.panda.pandaapigateway.config;
 
 import cn.hutool.core.date.LocalDateTimeUtil;
-import com.panda.NacosService;
 import com.panda.utils.SignUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.dubbo.config.annotation.DubboReference;
 import org.reactivestreams.Publisher;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;

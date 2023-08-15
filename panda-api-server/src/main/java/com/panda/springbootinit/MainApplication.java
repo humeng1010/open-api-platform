@@ -15,8 +15,8 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @MapperScan("com.panda.springbootinit.mapper")
 @EnableScheduling
 @EnableAspectJAutoProxy(proxyTargetClass = true, exposeProxy = true)
-@EnableDubbo
 @EnableDiscoveryClient
+@EnableDubbo
 public class MainApplication {
 
     public static void main(String[] args) {
@@ -24,3 +24,5 @@ public class MainApplication {
     }
 
 }
+
+

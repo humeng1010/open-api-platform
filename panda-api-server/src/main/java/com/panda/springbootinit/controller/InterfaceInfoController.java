@@ -23,6 +23,7 @@ import com.panda.springbootinit.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -161,6 +162,9 @@ public class InterfaceInfoController {
     @Resource
     private PandaApiClient pandaApiClient;
 
+    @Resource
+    private RestTemplate restTemplate;
+
     /**
      * 发布（仅管理员）
      *
@@ -179,7 +183,9 @@ public class InterfaceInfoController {
         InterfaceInfo oldInterfaceInfo = interfaceInfoService.getById(id);
         ThrowUtils.throwIf(oldInterfaceInfo == null, ErrorCode.NOT_FOUND_ERROR);
 
+        String url = oldInterfaceInfo.getUrl();
         // TODO 下面是固定的,将来需要根据url进行调用,判断是否可以调用
+
         com.panda.model.entity.User user = new com.panda.model.entity.User();
         user.setName("pandas");
         String res = pandaApiClient.getNameByPost(user);

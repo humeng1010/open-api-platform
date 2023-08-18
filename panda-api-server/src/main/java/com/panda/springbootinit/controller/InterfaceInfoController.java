@@ -184,8 +184,10 @@ public class InterfaceInfoController {
         ThrowUtils.throwIf(oldInterfaceInfo == null, ErrorCode.NOT_FOUND_ERROR);
 
         String url = oldInterfaceInfo.getUrl();
+        String method = oldInterfaceInfo.getMethod();
+        String requestParams = oldInterfaceInfo.getRequestParams();
+        String requestHeader = oldInterfaceInfo.getRequestHeader();
         // TODO 下面是固定的,将来需要根据url进行调用,判断是否可以调用
-
         com.panda.model.entity.User user = new com.panda.model.entity.User();
         user.setName("pandas");
         String res = pandaApiClient.getNameByPost(user);

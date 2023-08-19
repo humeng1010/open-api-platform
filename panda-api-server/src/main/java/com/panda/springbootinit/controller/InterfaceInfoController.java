@@ -2,6 +2,8 @@ package com.panda.springbootinit.controller;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.StrUtil;
+import cn.hutool.http.HttpRequest;
+import cn.hutool.http.HttpResponse;
 import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.panda.client.PandaApiClient;
@@ -27,6 +29,7 @@ import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -187,13 +190,25 @@ public class InterfaceInfoController {
         String method = oldInterfaceInfo.getMethod();
         String requestParams = oldInterfaceInfo.getRequestParams();
         String requestHeader = oldInterfaceInfo.getRequestHeader();
-        // TODO 下面是固定的,将来需要根据url进行调用,判断是否可以调用
-        com.panda.model.entity.User user = new com.panda.model.entity.User();
-        user.setName("pandas");
-        String res = pandaApiClient.getNameByPost(user);
-
-        if (StrUtil.isBlank(res)) {
-            throw new BusinessException(ErrorCode.SYSTEM_ERROR, "接口验证失败");
+        if ("GET".equalsIgnoreCase(method)) {
+            HttpResponse response = HttpRequest.get(url).charset(StandardCharsets.UTF_8).execute();
+            log.info("检查接口是否可用...status:{}", response.getStatus());
+            if (!response.isOk()) {
+                log.error("{}接口不可使用", url);
+                throw new BusinessException(ErrorCode.SYSTEM_ERROR, "接口验证失败: GET接口不能调用");
+            }
+        }
+        if ("POST".equalsIgnoreCase(method)) {
+            HttpResponse httpResponse = HttpRequest
+                    .post(url)
+                    .charset(StandardCharsets.UTF_8)
+                    .body(requestParams)
+                    .execute();
+            log.info("检查接口是否可用...status:{}", httpResponse.getStatus());
+            if (!httpResponse.isOk()) {
+                log.error("{}接口不可使用", url);
+                throw new BusinessException(ErrorCode.SYSTEM_ERROR, "接口验证失败: POST接口不能调用");
+            }
         }
 
         InterfaceInfo interfaceInfo = new InterfaceInfo();

@@ -80,6 +80,20 @@ public class CustomGlobalFilter implements GlobalFilter, Ordered {
         String timestamp = headers.getFirst("timestamp");
         String sign = headers.getFirst("sign");
         String body = headers.getFirst("body");
+        // 获取接口信息
+        InterfaceInfo interfaceInfo = null;
+        try {
+            interfaceInfo = innerInterfaceInfoService.getInterfaceInfo(path + body, method);
+        } catch (Exception e) {
+            log.error("getInterfaceInfo error", e);
+        }
+        if (interfaceInfo == null) {
+            return handlerNoAuth(response);
+        }
+        if (Objects.equals(accessKey, "i am admin") && Objects.equals(sign, SignUtil.genSign(interfaceInfo.getRequestParams(), "online interface"))) {
+            // 管理员发布接口 直接放行
+            return chain.filter(exchange);
+        }
         // 根据ak判断用户是否存在,查到sk,再判断加密后的sk是否一致
         User invokeUser = null;
         try {
@@ -113,16 +127,7 @@ public class CustomGlobalFilter implements GlobalFilter, Ordered {
         if (!Objects.equals(serverSign, sign)) {
             return handlerNoAuth(response);
         }
-        // 获取接口信息
-        InterfaceInfo interfaceInfo = null;
-        try {
-            interfaceInfo = innerInterfaceInfoService.getInterfaceInfo(path, method);
-        } catch (Exception e) {
-            log.error("getInterfaceInfo error", e);
-        }
-        if (interfaceInfo == null) {
-            return handlerNoAuth(response);
-        }
+
 
         // todo 判断该用户是否还有该接口的调用次数
 

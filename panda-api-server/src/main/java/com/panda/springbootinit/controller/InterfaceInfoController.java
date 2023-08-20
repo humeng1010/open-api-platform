@@ -1,7 +1,9 @@
 package com.panda.springbootinit.controller;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.util.RandomUtil;
 import cn.hutool.core.util.StrUtil;
+import cn.hutool.core.util.URLUtil;
 import cn.hutool.http.HttpRequest;
 import cn.hutool.http.HttpResponse;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -21,6 +23,7 @@ import com.panda.springbootinit.exception.BusinessException;
 import com.panda.springbootinit.exception.ThrowUtils;
 import com.panda.springbootinit.service.InterfaceInfoService;
 import com.panda.springbootinit.service.UserService;
+import com.panda.utils.SignUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.annotation.*;
@@ -28,7 +31,9 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -159,6 +164,22 @@ public class InterfaceInfoController {
         return ResultUtils.success(interfaceInfoVOPage);
     }
 
+    private Map<String, String> getRequestHeaderMap(String accessKey, String secretKey, String body) {
+        Map<String, String> header = new HashMap<>();
+        header.put("accessKey", accessKey);
+        // 密钥一定不能发送给后端
+        // header.put("secretKey", secretKey);
+        header.put("nonce", RandomUtil.randomNumbers(5));
+        if (StrUtil.isBlank(body)) {
+            body = "";
+        }
+        header.put("body", body);
+        header.put("timestamp", String.valueOf(System.currentTimeMillis()));
+        // 使用加密算法加密密钥
+        header.put("sign", SignUtil.genSign(body, secretKey));
+
+        return header;
+    }
 
     /**
      * 发布（仅管理员）
@@ -172,10 +193,13 @@ public class InterfaceInfoController {
         InterfaceInfo oldInterfaceInfo = getInterfaceInfoById(idRequest);
 
         String url = oldInterfaceInfo.getUrl();
+        String path = URLUtil.getPath(url);
+        String host = "http://localhost:8090";
+        String query = url.substring(url.lastIndexOf("?"));
         String method = oldInterfaceInfo.getMethod();
         String requestParams = oldInterfaceInfo.getRequestParams();
         if ("GET".equalsIgnoreCase(method)) {
-            HttpResponse response = HttpRequest.get(url).charset(StandardCharsets.UTF_8).execute();
+            HttpResponse response = HttpRequest.get(host + path + query).addHeaders(getRequestHeaderMap("i am admin", "online interface", requestParams)).charset(StandardCharsets.UTF_8).execute();
             log.info("检查接口是否可用...status:{}", response.getStatus());
             if (!response.isOk()) {
                 log.error("{}接口不可使用", url);

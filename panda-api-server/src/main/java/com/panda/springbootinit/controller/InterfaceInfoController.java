@@ -4,9 +4,8 @@ import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.http.HttpRequest;
 import cn.hutool.http.HttpResponse;
-import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.panda.client.PandaApiClient;
+import com.panda.client.InvokeApiClient;
 import com.panda.common.common.*;
 import com.panda.common.constant.UserConstant;
 import com.panda.common.model.dto.interfaceInfo.InterfaceInfoAddRequest;
@@ -25,7 +24,6 @@ import com.panda.springbootinit.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -162,12 +160,6 @@ public class InterfaceInfoController {
     }
 
 
-    @Resource
-    private PandaApiClient pandaApiClient;
-
-    @Resource
-    private RestTemplate restTemplate;
-
     /**
      * 发布（仅管理员）
      *
@@ -177,19 +169,11 @@ public class InterfaceInfoController {
     @PostMapping("/online")
     @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
     public BaseResponse<Boolean> onlineInterfaceInfo(@RequestBody IdRequest idRequest) {
-        if (idRequest == null || idRequest.getId() <= 0) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR);
-        }
-        Long id = idRequest.getId();
-
-        // 判断是否存在
-        InterfaceInfo oldInterfaceInfo = interfaceInfoService.getById(id);
-        ThrowUtils.throwIf(oldInterfaceInfo == null, ErrorCode.NOT_FOUND_ERROR);
+        InterfaceInfo oldInterfaceInfo = getInterfaceInfoById(idRequest);
 
         String url = oldInterfaceInfo.getUrl();
         String method = oldInterfaceInfo.getMethod();
         String requestParams = oldInterfaceInfo.getRequestParams();
-        String requestHeader = oldInterfaceInfo.getRequestHeader();
         if ("GET".equalsIgnoreCase(method)) {
             HttpResponse response = HttpRequest.get(url).charset(StandardCharsets.UTF_8).execute();
             log.info("检查接口是否可用...status:{}", response.getStatus());
@@ -212,7 +196,7 @@ public class InterfaceInfoController {
         }
 
         InterfaceInfo interfaceInfo = new InterfaceInfo();
-        interfaceInfo.setId(id);
+        interfaceInfo.setId(oldInterfaceInfo.getId());
         interfaceInfo.setStatus(InterfaceInfoStatusEnum.ONLINE.getStatus());
 
         boolean result = interfaceInfoService.updateById(interfaceInfo);
@@ -228,22 +212,23 @@ public class InterfaceInfoController {
     @PostMapping("/offline")
     @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
     public BaseResponse<Boolean> offlineInterfaceInfo(@RequestBody IdRequest idRequest) {
+        InterfaceInfo interfaceInfo = getInterfaceInfoById(idRequest);
+
+        interfaceInfo.setStatus(InterfaceInfoStatusEnum.OFFLINE.getStatus());
+        boolean result = interfaceInfoService.updateById(interfaceInfo);
+        return ResultUtils.success(result);
+    }
+
+    private InterfaceInfo getInterfaceInfoById(IdRequest idRequest) {
         if (idRequest == null || idRequest.getId() <= 0) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
         Long id = idRequest.getId();
 
         // 判断是否存在
-        InterfaceInfo oldInterfaceInfo = interfaceInfoService.getById(id);
-        ThrowUtils.throwIf(oldInterfaceInfo == null, ErrorCode.NOT_FOUND_ERROR);
-
-
-        InterfaceInfo interfaceInfo = new InterfaceInfo();
-        interfaceInfo.setId(id);
-        interfaceInfo.setStatus(InterfaceInfoStatusEnum.OFFLINE.getStatus());
-
-        boolean result = interfaceInfoService.updateById(interfaceInfo);
-        return ResultUtils.success(result);
+        InterfaceInfo interfaceInfo = interfaceInfoService.getById(id);
+        ThrowUtils.throwIf(interfaceInfo == null, ErrorCode.NOT_FOUND_ERROR);
+        return interfaceInfo;
     }
 
     /**
@@ -271,20 +256,16 @@ public class InterfaceInfoController {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
 
-
         User loginUser = userService.getLoginUser(request);
         String accessKey = loginUser.getAccessKey();
         String secretKey = loginUser.getSecretKey();
-        // TODO 优化调用具体的接口
-        try {
-            PandaApiClient tempClient = new PandaApiClient(accessKey, secretKey);
-            com.panda.model.entity.User user = JSONUtil.toBean(userRequestParams, com.panda.model.entity.User.class, false);
-            String result = tempClient.getNameByPost(user);
-            return ResultUtils.success(result);
-        } catch (Exception e) {
-            throw new BusinessException(ErrorCode.SYSTEM_ERROR, "请求参数转换错误,请输入正确的请求参数");
-        }
 
+        InvokeApiClient invokeApiClient = new InvokeApiClient(accessKey, secretKey);
+        HttpResponse httpResponse = invokeApiClient.invokeApi(interfaceInfo.getMethod(), interfaceInfo.getUrl(), userRequestParams);
+        if (!httpResponse.isOk()) {
+            throw new BusinessException(ErrorCode.SYSTEM_ERROR, "调用接口失败");
+        }
+        return ResultUtils.success(httpResponse.body());
     }
 
 }

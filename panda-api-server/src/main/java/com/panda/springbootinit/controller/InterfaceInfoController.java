@@ -16,12 +16,14 @@ import com.panda.common.model.dto.interfaceInfo.InterfaceInfoQueryRequest;
 import com.panda.common.model.dto.interfaceInfo.InterfaceInfoUpdateRequest;
 import com.panda.common.model.entity.InterfaceInfo;
 import com.panda.common.model.entity.User;
+import com.panda.common.model.entity.UserInterfaceInfo;
 import com.panda.common.model.enums.InterfaceInfoStatusEnum;
 import com.panda.common.model.vo.InterfaceInfoVO;
 import com.panda.springbootinit.annotation.AuthCheck;
 import com.panda.springbootinit.exception.BusinessException;
 import com.panda.springbootinit.exception.ThrowUtils;
 import com.panda.springbootinit.service.InterfaceInfoService;
+import com.panda.springbootinit.service.UserInterfaceInfoService;
 import com.panda.springbootinit.service.UserService;
 import com.panda.utils.SignUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -255,6 +257,11 @@ public class InterfaceInfoController {
         return interfaceInfo;
     }
 
+
+    @Resource
+    private UserInterfaceInfoService userInterfaceInfoService;
+
+
     /**
      * 调用接口
      *
@@ -281,6 +288,34 @@ public class InterfaceInfoController {
         }
 
         User loginUser = userService.getLoginUser(request);
+        Long userId = loginUser.getId();
+        // 查询中间表中是否有该用户与接口的信息,如果没有则创建并且设置leftNum=100免费100次调用次数(后面开启定时任务每天重置为100)
+        UserInterfaceInfo userInterfaceInfo = userInterfaceInfoService.query().eq("userId", userId).eq("interfaceInfoId", id).one();
+        // 创建接口与用户关系数据
+        if (userInterfaceInfo == null) {
+            UserInterfaceInfo info = new UserInterfaceInfo();
+            info.setUserId(userId);
+            info.setInterfaceInfoId(id);
+            // 初始100次调用次数
+            info.setLeftNum(100);
+            boolean save = userInterfaceInfoService.save(info);
+            if (!save) {
+                throw new BusinessException(ErrorCode.OPERATION_ERROR);
+            }
+        }
+        // 状态如果不是0则是被禁用了
+        if (Objects.equals(userInterfaceInfo.getStatus(), 0)) {
+            throw new BusinessException(ErrorCode.FORBIDDEN_ERROR);
+        }
+        
+        // 判断是否还有次数
+        Integer leftNum = userInterfaceInfo.getLeftNum();
+        if (leftNum <= 0) {
+            // 次数不足
+            throw new BusinessException(ErrorCode.API_COUNT_ERROR);
+        }
+
+
         String accessKey = loginUser.getAccessKey();
         String secretKey = loginUser.getSecretKey();
 

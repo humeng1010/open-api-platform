@@ -127,10 +127,7 @@ public class CustomGlobalFilter implements GlobalFilter, Ordered {
         if (!Objects.equals(serverSign, sign)) {
             return handlerNoAuth(response);
         }
-
-
-        // todo 判断该用户是否还有该接口的调用次数
-
+        
 
         // 请求转发+响应日志
         return handlerResponse(exchange, chain, interfaceInfo.getId(), invokeUser.getId());

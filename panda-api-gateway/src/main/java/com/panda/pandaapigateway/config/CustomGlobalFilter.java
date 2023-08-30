@@ -83,7 +83,7 @@ public class CustomGlobalFilter implements GlobalFilter, Ordered {
         // 获取接口信息
         InterfaceInfo interfaceInfo = null;
         try {
-            interfaceInfo = innerInterfaceInfoService.getInterfaceInfo(path + body, method);
+            interfaceInfo = innerInterfaceInfoService.getInterfaceInfo(path, method);
         } catch (Exception e) {
             log.error("getInterfaceInfo error", e);
         }
@@ -127,7 +127,7 @@ public class CustomGlobalFilter implements GlobalFilter, Ordered {
         if (!Objects.equals(serverSign, sign)) {
             return handlerNoAuth(response);
         }
-        
+
 
         // 请求转发+响应日志
         return handlerResponse(exchange, chain, interfaceInfo.getId(), invokeUser.getId());

@@ -195,13 +195,17 @@ public class InterfaceInfoController {
         InterfaceInfo oldInterfaceInfo = getInterfaceInfoById(idRequest);
 
         String url = oldInterfaceInfo.getUrl();
-        String path = URLUtil.getPath(url);
         String host = "http://localhost:8090";
-        String query = url.substring(url.lastIndexOf("?"));
+        String path = URLUtil.getPath(url);
+        String query = "";
+        if (url.contains("?")) {
+            query = url.substring(url.lastIndexOf("?"));
+        }
         String method = oldInterfaceInfo.getMethod();
         String requestParams = oldInterfaceInfo.getRequestParams();
         if ("GET".equalsIgnoreCase(method)) {
-            HttpResponse response = HttpRequest.get(host + path + query).addHeaders(getRequestHeaderMap("i am admin", "online interface", requestParams)).charset(StandardCharsets.UTF_8).execute();
+            String remoteUrl = host + path + query;
+            HttpResponse response = HttpRequest.get(remoteUrl).addHeaders(getRequestHeaderMap("i am admin", "online interface", requestParams)).charset(StandardCharsets.UTF_8).execute();
             log.info("检查接口是否可用...status:{}", response.getStatus());
             if (!response.isOk()) {
                 log.error("{}接口不可使用", url);
@@ -283,9 +287,7 @@ public class InterfaceInfoController {
         }
 
         String userRequestParams = interfaceInfoInvokeRequest.getUserRequestParams();
-        if (StrUtil.isBlank(userRequestParams)) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR);
-        }
+
 
         User loginUser = userService.getLoginUser(request);
         Long userId = loginUser.getId();
@@ -293,21 +295,20 @@ public class InterfaceInfoController {
         UserInterfaceInfo userInterfaceInfo = userInterfaceInfoService.query().eq("userId", userId).eq("interfaceInfoId", id).one();
         // 创建接口与用户关系数据
         if (userInterfaceInfo == null) {
-            UserInterfaceInfo info = new UserInterfaceInfo();
-            info.setUserId(userId);
-            info.setInterfaceInfoId(id);
+            userInterfaceInfo.setUserId(userId);
+            userInterfaceInfo.setInterfaceInfoId(id);
             // 初始100次调用次数
-            info.setLeftNum(100);
-            boolean save = userInterfaceInfoService.save(info);
+            userInterfaceInfo.setLeftNum(100);
+            boolean save = userInterfaceInfoService.save(userInterfaceInfo);
             if (!save) {
                 throw new BusinessException(ErrorCode.OPERATION_ERROR);
             }
         }
         // 状态如果不是0则是被禁用了
-        if (Objects.equals(userInterfaceInfo.getStatus(), 0)) {
+        if (!Objects.equals(userInterfaceInfo.getStatus(), 0)) {
             throw new BusinessException(ErrorCode.FORBIDDEN_ERROR);
         }
-        
+
         // 判断是否还有次数
         Integer leftNum = userInterfaceInfo.getLeftNum();
         if (leftNum <= 0) {

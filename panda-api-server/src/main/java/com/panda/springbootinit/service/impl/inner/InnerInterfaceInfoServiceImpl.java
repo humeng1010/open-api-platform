@@ -22,7 +22,7 @@ public class InnerInterfaceInfoServiceImpl implements InnerInterfaceInfoService 
         if (StringUtils.isAnyBlank(path, method)) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
-        return interfaceInfoService.query().likeRight("url", path).eq("method", method).one();
+        return interfaceInfoService.query().like("url", path).eq("method", method).one();
     }
 }
 

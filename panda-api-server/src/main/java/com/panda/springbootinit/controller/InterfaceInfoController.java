@@ -281,6 +281,7 @@ public class InterfaceInfoController {
         }
         Long id = interfaceInfoInvokeRequest.getId();
 
+        // 根据id获取接口信息
         InterfaceInfo interfaceInfo = interfaceInfoService.getById(id);
         if (Objects.equals(interfaceInfo.getStatus(), InterfaceInfoStatusEnum.OFFLINE.getStatus())) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "接口已关闭");
@@ -288,21 +289,13 @@ public class InterfaceInfoController {
 
         String userRequestParams = interfaceInfoInvokeRequest.getUserRequestParams();
 
-
         User loginUser = userService.getLoginUser(request);
         Long userId = loginUser.getId();
         // 查询中间表中是否有该用户与接口的信息,如果没有则创建并且设置leftNum=100免费100次调用次数(后面开启定时任务每天重置为100)
         UserInterfaceInfo userInterfaceInfo = userInterfaceInfoService.query().eq("userId", userId).eq("interfaceInfoId", id).one();
         // 创建接口与用户关系数据
         if (userInterfaceInfo == null) {
-            userInterfaceInfo.setUserId(userId);
-            userInterfaceInfo.setInterfaceInfoId(id);
-            // 初始100次调用次数
-            userInterfaceInfo.setLeftNum(100);
-            boolean save = userInterfaceInfoService.save(userInterfaceInfo);
-            if (!save) {
-                throw new BusinessException(ErrorCode.OPERATION_ERROR);
-            }
+            userInterfaceInfo = createInterfaceInfo(userId, id);
         }
         // 状态如果不是0则是被禁用了
         if (!Objects.equals(userInterfaceInfo.getStatus(), 0)) {
@@ -326,6 +319,26 @@ public class InterfaceInfoController {
             throw new BusinessException(ErrorCode.SYSTEM_ERROR, "调用接口失败");
         }
         return ResultUtils.success(httpResponse.body());
+    }
+
+    /**
+     * 创建用户-接口信息
+     *
+     * @param userId 用户id
+     * @param id     接口信息
+     * @return user-interface info
+     */
+    private UserInterfaceInfo createInterfaceInfo(Long userId, Long id) {
+        UserInterfaceInfo userInterfaceInfo = new UserInterfaceInfo();
+        userInterfaceInfo.setUserId(userId);
+        userInterfaceInfo.setInterfaceInfoId(id);
+        // 初始100次调用次数
+        userInterfaceInfo.setLeftNum(100);
+        boolean save = userInterfaceInfoService.save(userInterfaceInfo);
+        if (!save) {
+            throw new BusinessException(ErrorCode.OPERATION_ERROR);
+        }
+        return userInterfaceInfoService.getById(userInterfaceInfo.getId());
     }
 
 }

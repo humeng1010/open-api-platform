@@ -58,6 +58,7 @@ public class CustomGlobalFilter implements GlobalFilter, Ordered {
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
         log.info("-------global filter start-------");
         ServerHttpRequest request = exchange.getRequest();
+        String apiPath = request.getPath().value();
         String path = INTERFACE_HOST + request.getPath().value();
         String method = request.getMethodValue();
 
@@ -83,7 +84,7 @@ public class CustomGlobalFilter implements GlobalFilter, Ordered {
         // 获取接口信息
         InterfaceInfo interfaceInfo = null;
         try {
-            interfaceInfo = innerInterfaceInfoService.getInterfaceInfo(path, method);
+            interfaceInfo = innerInterfaceInfoService.getInterfaceInfo(apiPath, method);
         } catch (Exception e) {
             log.error("getInterfaceInfo error", e);
         }

@@ -24,6 +24,8 @@ public class LogInterceptor {
 
     /**
      * 执行拦截
+     * *        com.panda.springbootinit.controller.   *.*          (..)
+     * 任意返回类型          包名                      任意类名和方法名  这表示匹配方法的任意参数列表".."表示匹配任意个数的参数列表
      */
     @Around("execution(* com.panda.springbootinit.controller.*.*(..))")
     public Object doInterceptor(ProceedingJoinPoint point) throws Throwable {

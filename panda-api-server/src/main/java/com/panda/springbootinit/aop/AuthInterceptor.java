@@ -10,6 +10,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
+import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -29,12 +30,21 @@ public class AuthInterceptor {
     private UserService userService;
 
     /**
+     * 如果只是简单的切面逻辑，并且只在一个地方使用，直接在@Around中指定表达式可能更为简洁。
+     * 如果切点表达式会在多个通知中 复用 ，或者你想更好地分离切点定义和切面逻辑，那么使用@Pointcut来定义切点会更有意义。
+     */
+    @Pointcut("@annotation(com.panda.springbootinit.annotation.AuthCheck)")
+    public void pointCut() {
+    }
+
+    /**
      * 执行拦截
      *
      * @param joinPoint
      * @param authCheck
      * @return
      */
+    // @Around("pointCut() && @annotation(authCheck)")
     @Around("@annotation(authCheck)")
     public Object doInterceptor(ProceedingJoinPoint joinPoint, AuthCheck authCheck) throws Throwable {
         String mustRole = authCheck.mustRole();

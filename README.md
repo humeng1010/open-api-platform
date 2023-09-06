@@ -1,5 +1,19 @@
 # panda胖达api接口平台
 
+项目分为5个模块分别是:
+
+- `panda-api-common` 项目公共模块,包含了Dubbo调用的公共接口
+- `panda-api-gateway` 项目网关服务,做统一的权限校验
+- `panda-api-interface` 项目接口服务,为平台提供开放的接口
+- `panda-api-sdk-boot-starter` 接口调用的sdk,一行代码调用接口
+- `panda-api-server` 接口平台服务,项目的后端服务
+
+项目的运行前提条件(需要提前启动的服务):
+
+- MySQL 8.x
+- Redis
+- nacos
+
 项目整合nacos+dubbo踩坑总结:
 
 1. 开发环境nacos使用docker部署的,需要同时开放8848,9848,9849端口,命令如下:

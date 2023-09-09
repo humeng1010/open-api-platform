@@ -18,7 +18,6 @@
         <module>panda-api-gateway</module>
         <module>panda-api-interface</module>
         <module>panda-api-sdk-boot-starter</module>
-        <module>panda-api-rpc-interface</module>
         <module>panda-api-common</module>
     </modules>
 

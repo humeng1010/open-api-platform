@@ -4,6 +4,10 @@ server:
 spring:
   application:
     name: panda-api-gateway
+  redis:
+    host: localhost
+    database: 0
+  #    password: 123456
   cloud:
     gateway:
       routes:

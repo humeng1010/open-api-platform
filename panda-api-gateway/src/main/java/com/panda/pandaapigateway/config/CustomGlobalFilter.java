@@ -16,6 +16,7 @@ import org.springframework.core.Ordered;
 import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.core.io.buffer.DataBufferFactory;
 import org.springframework.core.io.buffer.DataBufferUtils;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.server.reactive.ServerHttpRequest;
@@ -25,12 +26,14 @@ import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import javax.annotation.Resource;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 
 /**
  * 全局过滤
@@ -53,6 +56,9 @@ public class CustomGlobalFilter implements GlobalFilter, Ordered {
     public static final List<String> IP_WHITE_LIST = Arrays.asList("127.0.0.1", "localhost");
 
     private static final String INTERFACE_HOST = "http://localhost:8123";
+
+    @Resource
+    private StringRedisTemplate stringRedisTemplate;
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
@@ -107,15 +113,28 @@ public class CustomGlobalFilter implements GlobalFilter, Ordered {
             return handlerNoAuth(response);
         }
 
-        // 判断随机数
+        // 判断随机数,每次都是随机的5位数字
         if (nonce != null && nonce.length() > 5) {
             return handlerNoAuth(response);
         }
 
-        // 判断时间
+        // 判断时间戳 如果时间超过了5分钟就直接返回
         assert timestamp != null;
+        // 发送请求的时间
         Date headerTime = new Date(Long.parseLong(timestamp));
+        // 发送请求的时间+5分钟如果在当前时间之前就说明超过了5分钟,直接拦截
         if (LocalDateTimeUtil.of(headerTime).plusMinutes(5).isBefore(LocalDateTime.now())) {
+            return handlerNoAuth(response);
+        }
+        // 解决 [请求重放] ,可以使用 timestamp + nonce 在有效的时间内判断随机数是否存在/重复
+        // 重复返回false 不重复返回true 添加成功并且设置过期时间5分钟
+        Boolean noRepeat = stringRedisTemplate
+                .opsForValue()
+                .setIfAbsent("panda:request:" + interfaceInfo.getId() + ":" + nonce,
+                        "", 5, TimeUnit.MINUTES);
+
+        // 如果存在随机值说明 可能是 请求重放 直接进行拦截
+        if (Boolean.FALSE.equals(noRepeat)) {
             return handlerNoAuth(response);
         }
 

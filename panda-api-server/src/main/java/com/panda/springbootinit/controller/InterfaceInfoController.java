@@ -314,6 +314,7 @@ public class InterfaceInfoController {
         String secretKey = loginUser.getSecretKey();
 
         InvokeApiClient invokeApiClient = new InvokeApiClient(accessKey, secretKey);
+        // 调用接口参数是中文会调用失败 方案一 统一转换为URL编码前端拿到后自己转换为中文
         HttpResponse httpResponse = invokeApiClient.invokeApi(interfaceInfo.getMethod(), interfaceInfo.getUrl(), userRequestParams);
         if (!httpResponse.isOk()) {
             throw new BusinessException(ErrorCode.SYSTEM_ERROR, "调用接口失败");

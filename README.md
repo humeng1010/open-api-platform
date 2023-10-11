@@ -1,5 +1,8 @@
 # panda胖达api接口平台
 
+> Dubbo + nacos 版本
+> 需要提前启动nacos!
+
 项目分为5个模块分别是:
 
 - `panda-api-common` 项目公共模块,包含了Dubbo调用的公共接口

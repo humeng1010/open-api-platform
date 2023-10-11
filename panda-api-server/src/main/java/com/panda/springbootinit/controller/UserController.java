@@ -1,5 +1,6 @@
 package com.panda.springbootinit.controller;
 
+import cn.hutool.core.util.RandomUtil;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.panda.common.common.BaseResponse;
 import com.panda.common.common.DeleteRequest;
@@ -9,6 +10,7 @@ import com.panda.common.constant.UserConstant;
 import com.panda.common.model.dto.user.*;
 import com.panda.common.model.entity.User;
 import com.panda.common.model.vo.LoginUserVO;
+import com.panda.common.model.vo.UserSecretVO;
 import com.panda.common.model.vo.UserVO;
 import com.panda.springbootinit.annotation.AuthCheck;
 import com.panda.springbootinit.exception.BusinessException;
@@ -266,6 +268,45 @@ public class UserController {
         user.setId(loginUser.getId());
         boolean result = userService.updateById(user);
         ThrowUtils.throwIf(!result, ErrorCode.OPERATION_ERROR);
+        return ResultUtils.success(true);
+    }
+
+    /**
+     * 查看当前登录的用户的密钥
+     *
+     * @param httpServletRequest
+     * @return
+     */
+    @GetMapping("/secret/show")
+    public BaseResponse<UserSecretVO> showCurrentUserSecret(HttpServletRequest httpServletRequest) {
+        User loginUser = userService.getLoginUser(httpServletRequest);
+        String accessKey = loginUser.getAccessKey();
+        String secretKey = loginUser.getSecretKey();
+        if (StringUtils.isAnyBlank(accessKey, secretKey)) {
+            throw new BusinessException(ErrorCode.NO_AK_SK);
+        }
+        UserSecretVO userSecretVO = new UserSecretVO();
+        userSecretVO.setAccessKey(accessKey);
+        userSecretVO.setSecretKey(secretKey);
+
+        return ResultUtils.success(userSecretVO);
+    }
+
+    /**
+     * 更新secretKey
+     *
+     * @param httpServletRequest
+     * @return
+     */
+    @PutMapping("/secret/update")
+    public BaseResponse<Boolean> updateCurrentUserSecret(HttpServletRequest httpServletRequest) {
+        User loginUser = userService.getLoginUser(httpServletRequest);
+        Long userId = loginUser.getId();
+        String newSecretKey = RandomUtil.randomString(32);
+        boolean update = userService.update().set("secretKey", newSecretKey).eq("id", userId).update();
+        if (!update) {
+            throw new BusinessException(ErrorCode.SYSTEM_ERROR);
+        }
         return ResultUtils.success(true);
     }
 }

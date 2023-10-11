@@ -72,7 +72,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             user.setUserName("panda_" + RandomUtil.randomString(5));
             user.setUserAvatar("https://img.58tg.com/up/allimg/tx18/021720207805.jpg");
             user.setAccessKey(IdUtil.simpleUUID());
-            user.setSecretKey(RandomUtil.randomString(18));
+            user.setSecretKey(RandomUtil.randomString(32));
             boolean saveResult = this.save(user);
             if (!saveResult) {
                 throw new BusinessException(ErrorCode.SYSTEM_ERROR, "注册失败，数据库错误");

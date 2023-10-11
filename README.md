@@ -49,6 +49,26 @@ dubbo+nacos改为openfegin+eureka实现远程调用：
 > https://blog.csdn.net/qq_21480329/article/details/125126024
 > 解决办法：使用线程池来包装Feign调用可以解决报错问题
 >
+> 示例：
+>
+> ```java
+> 		//首先我们在成员变量的地方创建一个线程池：
+> 		/**
+>      * 创建线程池解决 openfegin 的同步问题
+>      */
+>     private ExecutorService executors = new ThreadPoolExecutor(16,
+>             20, 10, TimeUnit.SECONDS,
+>             new ArrayBlockingQueue<>(10), Executors.defaultThreadFactory(), 
+>             new ThreadPoolExecutor.AbortPolicy());
+>             
+> 		//在网关的全局过滤器中需要通过openfegin远程调用接口的地方这样写：
+> 		Future<User> submit = executors.submit(() -> pandaBackendClient.getInvokeUser(accessKey));
+> 		User invokeUser = submit.get();
+> 		// 进行后续的操作...
+> ```
+>
+> 
+>
 > 因为线程池会将Feign的调用从Reactor的非阻塞线程切换到线程池的线程中执行，从而避免了Reactor中的非阻塞要求。这样，您可以在线程池中执行Feign调用，而不会触发Reactor的"可能的阻塞调用"警告。
 >
 > 在Reactive编程中，异步和非阻塞是关键概念。Reactor使用的是事件循环线程，而且它会监控阻塞调用。如果您在Reactor线程中执行可能导致阻塞的操作（如Feign同步调用），Reactor会发出警告，因为这可能导致线程饥饿和性能问题。

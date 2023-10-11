@@ -7,7 +7,6 @@ spring:
   redis:
     host: localhost
     database: 0
-  #    password: 123456
   cloud:
     gateway:
       routes:
@@ -16,17 +15,24 @@ spring:
             http://localhost:8123
           predicates:
             - Path=/api/**
-    nacos:
-      discovery:
-        server-addr: 127.0.0.1:8848
-dubbo:
-  registry:
-    address: nacos://127.0.0.1:8848
-  application:
-    name: panda-api-gateway
-  #    qos-enable: true
-  #    qos-port: 33333
-  #    qos-accept-foreign-ip: false
-  protocol:
-    name: dubbo
-    port: -1
+
+eureka:
+  client:
+    # 将自己注册到Eureka中
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://127.0.0.1:7001/eureka/
+  # 主机名称修改
+  instance:
+    instance-id: panda-api-gateway
+    prefer-ip-address: true # 访问路径可以显示IP
+    # Eureka客户端向服务端发送心跳的时间,单位为秒(默认30秒)
+    lease-renewal-interval-in-seconds: 1
+    # Eureka服务端在收到最后一次心跳等待时间上限,单位秒(默认90秒),超时则会剔除服务
+    lease-expiration-duration-in-seconds: 2
+
+logging:
+  level:
+    # 以debug模式监控该接口
+    com.panda.pandaapigateway.service.PandaBackendClient: debug

@@ -38,6 +38,21 @@ public class UserController {
     private UserService userService;
 
 
+    /**
+     * 根据accessKey获取用户信息
+     * 用于远程调用的方法 Producer
+     *
+     * @param accessKey ak 每一位用户都是唯一的
+     * @return 用户信息
+     */
+    @GetMapping("/getInvokeUser")
+    public User getInvokeUser(@RequestParam("accessKey") String accessKey) {
+        if (StringUtils.isAnyBlank(accessKey)) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+        }
+        return userService.query().eq("accessKey", accessKey).one();
+    }
+    
     // region 登录相关
 
     /**

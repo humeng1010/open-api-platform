@@ -27,6 +27,7 @@ import com.panda.springbootinit.service.UserInterfaceInfoService;
 import com.panda.springbootinit.service.UserService;
 import com.panda.utils.SignUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.annotation.*;
 
@@ -54,6 +55,22 @@ public class InterfaceInfoController {
     @Resource
     private UserService userService;
 
+
+    /**
+     * 远程调用的方法 Producer
+     * 根据 URL 和 method 获取接口信息
+     *
+     * @param path   url
+     * @param method 方法
+     * @return 接口信息
+     */
+    @GetMapping("/getInterfaceInfo")
+    public InterfaceInfo getInterfaceInfoByUrlAndMethod(@RequestParam("path") String path, @RequestParam("method") String method) {
+        if (StringUtils.isAnyBlank(path, method)) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+        }
+        return interfaceInfoService.query().like("url", path).eq("method", method).one();
+    }
 
     /**
      * 创建

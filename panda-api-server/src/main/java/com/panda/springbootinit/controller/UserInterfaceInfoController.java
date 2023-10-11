@@ -5,6 +5,7 @@ import com.panda.common.common.DeleteRequest;
 import com.panda.common.common.ErrorCode;
 import com.panda.common.common.ResultUtils;
 import com.panda.common.constant.UserConstant;
+import com.panda.common.model.dto.userInterfaceInfo.InvokeCountRequest;
 import com.panda.common.model.dto.userInterfaceInfo.UserInterfaceInfoAddRequest;
 import com.panda.common.model.dto.userInterfaceInfo.UserInterfaceInfoUpdateRequest;
 import com.panda.common.model.entity.User;
@@ -37,6 +38,29 @@ public class UserInterfaceInfoController {
     @Resource
     private UserService userService;
 
+
+    /**
+     * 远程调用方法 producer
+     * 请求接口成功后减少当前用户的请求次数
+     *
+     * @param invokeCountRequest 请求体
+     * @return 是否成功
+     */
+    @PutMapping("/invokeCount")
+    public boolean invokeCount(@RequestBody InvokeCountRequest invokeCountRequest) {
+        Long interfaceInfoId = invokeCountRequest.getInterfaceInfoId();
+        Long userId = invokeCountRequest.getUserId();
+
+        if (interfaceInfoId <= 0 || userId <= 0) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+        }
+        return userInterfaceInfoService.update()
+                .setSql("leftNum = leftNum - 1, totalNum = totalNum + 1")
+                .eq("interfaceInfoId", interfaceInfoId)
+                .eq("userId", userId)
+                .gt("leftNum", 0)
+                .update();
+    }
 
     /**
      * 创建

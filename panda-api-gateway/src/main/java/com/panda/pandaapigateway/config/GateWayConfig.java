@@ -11,6 +11,7 @@ import org.springframework.context.annotation.Import;
 public class GateWayConfig {
     @Bean
     public RouteLocator customRouteLocator(RouteLocatorBuilder builder) {
+        // 编程式断言跳转
         return builder.routes()
                 .route("route1",
                         r -> r.path("/l").uri("https://huya.com/"))

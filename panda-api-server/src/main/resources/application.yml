@@ -34,21 +34,25 @@ spring:
   jackson:
     date-format: yyyy-MM-dd HH:mm:ss
     time-zone: Asia/Shanghai
-  cloud:
-    nacos:
-      discovery:
-        server-addr: 127.0.0.1:8848
   main:
     allow-circular-references: true
 
-dubbo:
-  application:
-    name: panda-api-backend
-  protocol:
-    name: dubbo
-    port: -1
-  registry:
-    address: nacos://127.0.0.1:8848
+eureka:
+  client:
+    # 将自己注册到Eureka中
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://127.0.0.1:7001/eureka/
+  # 主机名称修改
+  instance:
+    instance-id: panda-api-backend
+    prefer-ip-address: true # 访问路径可以显示IP
+    # Eureka客户端向服务端发送心跳的时间,单位为秒(默认30秒)
+    lease-renewal-interval-in-seconds: 1
+    # Eureka服务端在收到最后一次心跳等待时间上限,单位秒(默认90秒),超时则会剔除服务
+    lease-expiration-duration-in-seconds: 2
+
 
 server:
   address: 0.0.0.0
@@ -71,8 +75,8 @@ mybatis-plus:
   type-aliases-package: com.panda.common.model.entity
 
 # AK SK
-panda:
-  client:
-    access-key: panda
-    secret-key: abcdefg
+#panda:
+#  client:
+#    access-key: panda
+#    secret-key: gzs2bshz0r7k5e01qudhibclzffay4es
 

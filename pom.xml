@@ -16,9 +16,9 @@
         <module>panda-api-server</module>
         <module>panda-api-interface</module>
         <module>panda-api-gateway</module>
-        <module>panda-api-interface</module>
         <module>panda-api-sdk-boot-starter</module>
         <module>panda-api-common</module>
+        <module>panda-api-eureka</module>
     </modules>
 
     <properties>
@@ -51,14 +51,6 @@
                 <groupId>com.alibaba.cloud</groupId>
                 <artifactId>spring-cloud-alibaba-dependencies</artifactId>
                 <version>${spring-cloud-alibaba.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-            <!-- Dubbo -->
-            <dependency>
-                <groupId>org.apache.dubbo</groupId>
-                <artifactId>dubbo-bom</artifactId>
-                <version>${dubbo.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>

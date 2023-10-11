@@ -1,14 +1,12 @@
 package com.panda.pandaapigateway.config;
 
 import cn.hutool.core.date.LocalDateTimeUtil;
+import com.panda.common.model.dto.userInterfaceInfo.InvokeCountRequest;
 import com.panda.common.model.entity.InterfaceInfo;
 import com.panda.common.model.entity.User;
-import com.panda.common.service.InnerInterfaceInfoService;
-import com.panda.common.service.InnerUserInterfaceInfoService;
-import com.panda.common.service.InnerUserService;
+import com.panda.pandaapigateway.service.PandaBackendClient;
 import com.panda.utils.SignUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.dubbo.config.annotation.DubboReference;
 import org.reactivestreams.Publisher;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
@@ -33,7 +31,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 /**
  * 全局过滤
@@ -41,14 +39,13 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 public class CustomGlobalFilter implements GlobalFilter, Ordered {
 
-    @DubboReference
-    private InnerUserService innerUserService;
 
-    @DubboReference
-    private InnerInterfaceInfoService innerInterfaceInfoService;
+    private final PandaBackendClient pandaBackendClient;
 
-    @DubboReference
-    private InnerUserInterfaceInfoService innerUserInterfaceInfoService;
+    public CustomGlobalFilter(PandaBackendClient pandaBackendClient) {
+        this.pandaBackendClient = pandaBackendClient;
+    }
+
 
     /**
      * 白名单
@@ -59,6 +56,13 @@ public class CustomGlobalFilter implements GlobalFilter, Ordered {
 
     @Resource
     private StringRedisTemplate stringRedisTemplate;
+
+    /**
+     * 创建线程池解决 openfegin 的同步问题
+     */
+    private ExecutorService executors = new ThreadPoolExecutor(16,
+            20, 10, TimeUnit.SECONDS,
+            new ArrayBlockingQueue<>(10), Executors.defaultThreadFactory(), new ThreadPoolExecutor.AbortPolicy());
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
@@ -87,16 +91,21 @@ public class CustomGlobalFilter implements GlobalFilter, Ordered {
         String timestamp = headers.getFirst("timestamp");
         String sign = headers.getFirst("sign");
         String body = headers.getFirst("body");
-        // 获取接口信息
         InterfaceInfo interfaceInfo = null;
         try {
-            interfaceInfo = innerInterfaceInfoService.getInterfaceInfo(apiPath, method);
+            Future<InterfaceInfo> submit = executors.submit(() ->
+
+                    pandaBackendClient.getInterfaceInfo(apiPath, method)
+            );
+            interfaceInfo = submit.get();
+            // interfaceInfo = pandaBackendClient.getInterfaceInfo(apiPath, method);
         } catch (Exception e) {
             log.error("getInterfaceInfo error", e);
         }
         if (interfaceInfo == null) {
             return handlerNoAuth(response);
         }
+
         if (Objects.equals(accessKey, "i am admin") && Objects.equals(sign, SignUtil.genSign(interfaceInfo.getRequestParams(), "online interface"))) {
             // 管理员发布接口 直接放行
             return chain.filter(exchange);
@@ -104,7 +113,9 @@ public class CustomGlobalFilter implements GlobalFilter, Ordered {
         // 根据ak判断用户是否存在,查到sk,再判断加密后的sk是否一致
         User invokeUser = null;
         try {
-            invokeUser = innerUserService.getInvokeUser(accessKey);
+            Future<User> submit = executors.submit(() -> pandaBackendClient.getInvokeUser(accessKey));
+            invokeUser = submit.get();
+            // invokeUser = pandaBackendClient.getInvokeUser(accessKey);
 
         } catch (Exception e) {
             log.error("getInvokeUser error", e);
@@ -180,7 +191,11 @@ public class CustomGlobalFilter implements GlobalFilter, Ordered {
                                     fluxBody.map(dataBuffer -> {
                                         // 调用成功 接口调用次数+1 剩余次数 -1 invokeCount
                                         try {
-                                            innerUserInterfaceInfoService.invokeCount(interfaceInfoId, userId);
+                                            InvokeCountRequest invokeCountRequest = new InvokeCountRequest();
+                                            invokeCountRequest.setInterfaceInfoId(interfaceInfoId);
+                                            invokeCountRequest.setUserId(userId);
+                                            executors.submit(() -> pandaBackendClient.invokeCount(invokeCountRequest));
+                                            // pandaBackendClient.invokeCount(invokeCountRequest);
                                         } catch (Exception e) {
                                             log.error("invokeCount error", e);
                                         }

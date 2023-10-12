@@ -7,6 +7,7 @@ import cn.hutool.http.HttpResponse;
 import cn.hutool.http.Method;
 import com.panda.utils.SignUtil;
 
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -43,6 +44,7 @@ public class InvokeApiClient {
                 .of(url)
                 .setMethod(Method.valueOf(method))
                 .addHeaders(getRequestHeaderMap(requestParam))
+                .charset(StandardCharsets.UTF_8)
                 .body(requestParam)
                 .execute();
 

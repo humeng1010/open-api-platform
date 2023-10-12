@@ -1,20 +1,15 @@
 package com.panda.client;
 
-import cn.hutool.core.util.RandomUtil;
 import cn.hutool.http.HttpRequest;
 import cn.hutool.http.HttpResponse;
-import cn.hutool.http.HttpUtil;
-import cn.hutool.json.JSONUtil;
-import com.panda.model.entity.User;
-import com.panda.utils.SignUtil;
 import lombok.extern.slf4j.Slf4j;
 
-import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
-import java.util.Map;
+import static com.panda.utils.HeaderUtil.getRequestHeaderMap;
 
 /**
- * 调用第三方接口的客户端
+ * 调用第三方接口的客户端 具体的接口 每新增一个接口就需要更新一下客户端工具
+ *
+ * @author humeng
  */
 @Slf4j
 public class PandaApiClient {
@@ -32,42 +27,17 @@ public class PandaApiClient {
     }
 
     public String getNameByGet(String name) {
-        HashMap<String, Object> params = new HashMap<>();
-        params.put("name", "张三");
-        String result = HttpUtil.get(GATEWAY_HOST + "/api/name", params);
-        log.info("结果:{}", result);
-        return result;
-    }
-
-    public String getNameByPost(String name) {
-        HashMap<String, Object> params = new HashMap<>();
-        params.put("name", "张三");
-        String result = HttpUtil.post(GATEWAY_HOST + "/api/name", params);
-        log.info("结果:{}", result);
-        return result;
-    }
-
-    private Map<String, String> getRequestHeaderMap(String body) {
-        Map<String, String> header = new HashMap<>();
-        header.put("accessKey", accessKey);
-        // 密钥一定不能发送给后端
-        // header.put("secretKey", secretKey);
-        header.put("nonce", RandomUtil.randomNumbers(5));
-        header.put("body", body);
-        header.put("timestamp", String.valueOf(System.currentTimeMillis()));
-        // 使用加密算法加密密钥
-        header.put("sign", SignUtil.genSign(body, secretKey));
-
-        return header;
+        HttpResponse response = HttpRequest.get(GATEWAY_HOST + "/api/name")
+                .addHeaders(getRequestHeaderMap(accessKey, secretKey, name))
+                .execute();
+        log.info("结果:{}", response);
+        return response.body();
     }
 
 
-    public String getNameByPost(User user) {
-        String json = JSONUtil.toJsonStr(user);
-        HttpResponse httpResponse = HttpRequest.post(GATEWAY_HOST + "/api/name/user")
-                .charset(StandardCharsets.UTF_8)
-                .body(json)
-                .addHeaders(getRequestHeaderMap(json))
+    public String joke() {
+        HttpResponse httpResponse = HttpRequest.get(GATEWAY_HOST + "/api/random/joke")
+                .addHeaders(getRequestHeaderMap(accessKey, secretKey, ""))
                 .execute();
         log.info("状态码:{};响应体:{}", httpResponse.getStatus(), httpResponse.body());
         return httpResponse.body();

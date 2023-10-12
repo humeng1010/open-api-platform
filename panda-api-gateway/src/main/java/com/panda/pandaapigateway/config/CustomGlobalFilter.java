@@ -1,6 +1,7 @@
 package com.panda.pandaapigateway.config;
 
 import cn.hutool.core.date.LocalDateTimeUtil;
+import cn.hutool.core.util.URLUtil;
 import com.panda.common.model.dto.userInterfaceInfo.InvokeCountRequest;
 import com.panda.common.model.entity.InterfaceInfo;
 import com.panda.common.model.entity.User;
@@ -91,6 +92,7 @@ public class CustomGlobalFilter implements GlobalFilter, Ordered {
         String timestamp = headers.getFirst("timestamp");
         String sign = headers.getFirst("sign");
         String body = headers.getFirst("body");
+        body = URLUtil.decode(body);
         InterfaceInfo interfaceInfo = null;
         try {
             Future<InterfaceInfo> submit = executors.submit(() ->

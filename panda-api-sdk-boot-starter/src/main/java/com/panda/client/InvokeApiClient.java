@@ -25,7 +25,7 @@ public class InvokeApiClient {
         header.put("accessKey", accessKey);
         // 密钥一定不能发送给后端
         // header.put("secretKey", secretKey);
-        header.put("nonce", RandomUtil.randomNumbers(5));
+        header.put("nonce", RandomUtil.randomNumbers(10));
         if (StrUtil.isBlank(body)) {
             body = "";
         }

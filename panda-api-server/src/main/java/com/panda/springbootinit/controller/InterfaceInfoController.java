@@ -3,9 +3,9 @@ package com.panda.springbootinit.controller;
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.RandomUtil;
 import cn.hutool.core.util.StrUtil;
-import cn.hutool.core.util.URLUtil;
 import cn.hutool.http.HttpRequest;
 import cn.hutool.http.HttpResponse;
+import cn.hutool.http.Method;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.panda.client.InvokeApiClient;
 import com.panda.common.common.*;
@@ -211,18 +211,17 @@ public class InterfaceInfoController {
     public BaseResponse<Boolean> onlineInterfaceInfo(@RequestBody IdRequest idRequest) {
         InterfaceInfo oldInterfaceInfo = getInterfaceInfoById(idRequest);
 
+        // 单纯的url不包含查询字符串(GET)
         String url = oldInterfaceInfo.getUrl();
-        String host = "http://localhost:8090";
-        String path = URLUtil.getPath(url);
-        String query = "";
-        if (url.contains("?")) {
-            query = url.substring(url.lastIndexOf("?"));
-        }
         String method = oldInterfaceInfo.getMethod();
         String requestParams = oldInterfaceInfo.getRequestParams();
-        if ("GET".equalsIgnoreCase(method)) {
-            String remoteUrl = host + path + query;
-            HttpResponse response = HttpRequest.get(remoteUrl).addHeaders(getRequestHeaderMap("i am admin", "online interface", requestParams)).charset(StandardCharsets.UTF_8).execute();
+
+        // 如果是GET请求需要手动拼接上查询字符串
+        if (Method.GET.equals(Method.valueOf(method))) {
+            HttpResponse response = HttpRequest.get(url + (requestParams.equals("null") ? "" : requestParams))
+                    .addHeaders(getRequestHeaderMap("i am admin", "online interface", requestParams))
+                    .charset(StandardCharsets.UTF_8)
+                    .execute();
             log.info("检查接口是否可用...status:{}", response.getStatus());
             if (!response.isOk()) {
                 log.error("{}接口不可使用", url);
@@ -304,7 +303,6 @@ public class InterfaceInfoController {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "接口已关闭");
         }
 
-        String userRequestParams = interfaceInfoInvokeRequest.getUserRequestParams();
 
         User loginUser = userService.getLoginUser(request);
         Long userId = loginUser.getId();
@@ -327,12 +325,24 @@ public class InterfaceInfoController {
         }
 
 
+        // 准备调用接口
         String accessKey = loginUser.getAccessKey();
         String secretKey = loginUser.getSecretKey();
 
+        String url = interfaceInfo.getUrl();
+        String method = interfaceInfo.getMethod();
+        String userRequestParams = interfaceInfoInvokeRequest.getUserRequestParams();
+        String requestParams = interfaceInfo.getRequestParams();
+        // 判断请求是否需要参数
+        if (!requestParams.equals("null")) {
+            // 如果用户没有传递请求参数,但是该请求需要参数,我们就使用示例的值
+            userRequestParams = StrUtil.isBlank(userRequestParams) ? requestParams : userRequestParams;
+        }
+
+
         InvokeApiClient invokeApiClient = new InvokeApiClient(accessKey, secretKey);
         // 调用接口参数是中文会调用失败 方案一 统一转换为URL编码前端拿到后自己转换为中文
-        HttpResponse httpResponse = invokeApiClient.invokeApi(interfaceInfo.getMethod(), interfaceInfo.getUrl(), userRequestParams);
+        HttpResponse httpResponse = invokeApiClient.invokeApi(method, url, userRequestParams);
         if (!httpResponse.isOk()) {
             throw new BusinessException(ErrorCode.SYSTEM_ERROR, "调用接口失败");
         }

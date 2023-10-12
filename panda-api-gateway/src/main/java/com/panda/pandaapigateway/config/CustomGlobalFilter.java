@@ -98,7 +98,6 @@ public class CustomGlobalFilter implements GlobalFilter, Ordered {
                     pandaBackendClient.getInterfaceInfo(apiPath, method)
             );
             interfaceInfo = submit.get();
-            // interfaceInfo = pandaBackendClient.getInterfaceInfo(apiPath, method);
         } catch (Exception e) {
             log.error("getInterfaceInfo error", e);
         }
@@ -115,7 +114,6 @@ public class CustomGlobalFilter implements GlobalFilter, Ordered {
         try {
             Future<User> submit = executors.submit(() -> pandaBackendClient.getInvokeUser(accessKey));
             invokeUser = submit.get();
-            // invokeUser = pandaBackendClient.getInvokeUser(accessKey);
 
         } catch (Exception e) {
             log.error("getInvokeUser error", e);
@@ -124,8 +122,8 @@ public class CustomGlobalFilter implements GlobalFilter, Ordered {
             return handlerNoAuth(response);
         }
 
-        // 判断随机数,每次都是随机的5位数字
-        if (nonce != null && nonce.length() > 5) {
+        // 判断随机数,每次都是随机的10位数字
+        if (nonce != null && nonce.length() != 10) {
             return handlerNoAuth(response);
         }
 

@@ -34,6 +34,15 @@ public class RandomController {
         private String message;
         private String status;
     }
-    
+
+    @GetMapping("/joke")
+    public String joke() {
+        HttpResponse res = HttpRequest.get("https://api.vvhan.com/api/joke").execute();
+        if (!res.isOk()) {
+            throw new BusinessException(ErrorCode.SYSTEM_ERROR);
+        }
+        return res.body();
+    }
+
 }
 

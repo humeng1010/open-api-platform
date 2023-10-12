@@ -1,7 +1,6 @@
 package com.panda.springbootinit.controller;
 
 import cn.hutool.core.bean.BeanUtil;
-import cn.hutool.core.util.RandomUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.http.HttpRequest;
 import cn.hutool.http.HttpResponse;
@@ -25,7 +24,6 @@ import com.panda.springbootinit.exception.ThrowUtils;
 import com.panda.springbootinit.service.InterfaceInfoService;
 import com.panda.springbootinit.service.UserInterfaceInfoService;
 import com.panda.springbootinit.service.UserService;
-import com.panda.utils.SignUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -34,11 +32,11 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
+
+import static com.panda.utils.HeaderUtil.getRequestHeaderMap;
 
 /**
  * 接口管理
@@ -183,22 +181,6 @@ public class InterfaceInfoController {
         return ResultUtils.success(interfaceInfoVOPage);
     }
 
-    private Map<String, String> getRequestHeaderMap(String accessKey, String secretKey, String body) {
-        Map<String, String> header = new HashMap<>();
-        header.put("accessKey", accessKey);
-        // 密钥一定不能发送给后端
-        // header.put("secretKey", secretKey);
-        header.put("nonce", RandomUtil.randomNumbers(5));
-        if (StrUtil.isBlank(body)) {
-            body = "";
-        }
-        header.put("body", body);
-        header.put("timestamp", String.valueOf(System.currentTimeMillis()));
-        // 使用加密算法加密密钥
-        header.put("sign", SignUtil.genSign(body, secretKey));
-
-        return header;
-    }
 
     /**
      * 发布（仅管理员）
@@ -228,9 +210,11 @@ public class InterfaceInfoController {
                 throw new BusinessException(ErrorCode.SYSTEM_ERROR, "接口验证失败: GET接口不能调用");
             }
         }
+        // POST 未使用 未测试 !
         if ("POST".equalsIgnoreCase(method)) {
             HttpResponse httpResponse = HttpRequest
                     .post(url)
+                    .addHeaders(getRequestHeaderMap("i am admin", "online interface", requestParams))
                     .charset(StandardCharsets.UTF_8)
                     .body(requestParams)
                     .execute();

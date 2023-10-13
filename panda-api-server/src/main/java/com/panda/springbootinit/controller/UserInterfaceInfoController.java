@@ -1,5 +1,6 @@
 package com.panda.springbootinit.controller;
 
+import cn.hutool.core.bean.BeanUtil;
 import com.panda.common.common.BaseResponse;
 import com.panda.common.common.DeleteRequest;
 import com.panda.common.common.ErrorCode;
@@ -10,6 +11,7 @@ import com.panda.common.model.dto.userInterfaceInfo.UserInterfaceInfoAddRequest;
 import com.panda.common.model.dto.userInterfaceInfo.UserInterfaceInfoUpdateRequest;
 import com.panda.common.model.entity.User;
 import com.panda.common.model.entity.UserInterfaceInfo;
+import com.panda.common.model.vo.UserInterfaceInfoLeftCountVO;
 import com.panda.springbootinit.annotation.AuthCheck;
 import com.panda.springbootinit.exception.BusinessException;
 import com.panda.springbootinit.exception.ThrowUtils;
@@ -24,6 +26,8 @@ import javax.servlet.http.HttpServletRequest;
 
 /**
  * 接口管理
+ *
+ * @author humeng
  */
 @RestController
 @RequestMapping("/user_interfaceInfo")
@@ -62,12 +66,24 @@ public class UserInterfaceInfoController {
                 .update();
     }
 
+    @GetMapping("/left/{id}")
+    public BaseResponse<UserInterfaceInfoLeftCountVO> getCurrentUserInterfaceInfoLeftCount(
+            @PathVariable("id") Long interfaceInfoId, HttpServletRequest request) {
+        User loginUser = userService.getLoginUser(request);
+        Long userId = loginUser.getId();
+        UserInterfaceInfo userInterfaceInfo = userInterfaceInfoService.query().select("totalNum", "leftNum").eq("userId", userId)
+                .eq("interfaceInfoId", interfaceInfoId).one();
+        
+        UserInterfaceInfoLeftCountVO userInterfaceInfoLeftCountVO = BeanUtil.copyProperties(userInterfaceInfo, UserInterfaceInfoLeftCountVO.class);
+        return ResultUtils.success(userInterfaceInfoLeftCountVO);
+    }
+
     /**
      * 创建
      *
-     * @param userInterfaceInfoAddRequest
-     * @param request
-     * @return
+     * @param userInterfaceInfoAddRequest 新增
+     * @param request                     请求
+     * @return id
      */
     @PostMapping("/add")
     @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
@@ -93,9 +109,9 @@ public class UserInterfaceInfoController {
     /**
      * 删除
      *
-     * @param deleteRequest
-     * @param request
-     * @return
+     * @param deleteRequest 删除
+     * @param request       请求
+     * @return boolean
      */
     @PostMapping("/delete")
     @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
@@ -119,8 +135,8 @@ public class UserInterfaceInfoController {
     /**
      * 更新（仅管理员）
      *
-     * @param userInterfaceInfoUpdateRequest
-     * @return
+     * @param userInterfaceInfoUpdateRequest 更新请求
+     * @return boolean
      */
     @PostMapping("/update")
     @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)

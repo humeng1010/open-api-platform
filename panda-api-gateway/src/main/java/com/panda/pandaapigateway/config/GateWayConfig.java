@@ -6,6 +6,11 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 
+/**
+ * Gateway配置
+ *
+ * @author humeng
+ */
 @Configuration
 @Import(CustomGlobalFilter.class)
 public class GateWayConfig {

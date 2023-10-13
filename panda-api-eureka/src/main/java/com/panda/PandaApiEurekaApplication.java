@@ -5,10 +5,12 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.netflix.eureka.server.EnableEurekaServer;
 
 /**
+ * eureka 注册中心
+ *
  * @author humeng
  */
 @SpringBootApplication
-@EnableEurekaServer // 开启Eureka服务
+@EnableEurekaServer
 public class PandaApiEurekaApplication {
     public static void main(String[] args) {
         SpringApplication.run(PandaApiEurekaApplication.class, args);

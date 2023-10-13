@@ -16,6 +16,11 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * openfeign 配置类
+ *
+ * @author humeng
+ */
 @Configuration
 public class FeignConfig {
     @Bean

@@ -13,6 +13,9 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 
+/**
+ * @author humeng
+ */
 @Configuration
 public class HttpMsgConverConfig {
     @Bean

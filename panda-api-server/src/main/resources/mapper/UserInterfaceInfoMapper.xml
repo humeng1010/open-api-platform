@@ -22,10 +22,21 @@
         createTime,updateTime,isDelete
     </sql>
     <select id="listTopInvokeInterfaceInfo" resultType="com.panda.common.model.entity.InterfaceInvokeInfo">
-        select ii.id, ii.name,ii.method,ii.url,ii.status, sum(totalNum) as 'totalNum'
+        select ii.id, ii.name, ii.method, ii.url, ii.status, sum(totalNum) as 'totalNum'
         from user_interface_info
                  left join interface_info ii on user_interface_info.interfaceInfoId = ii.id
         where ii.isDelete = 0
-        group by interfaceInfoId order by sum(totalNum) desc limit #{limit};
+        group by interfaceInfoId
+        order by sum(totalNum) desc
+        limit #{limit};
+    </select>
+    <select id="listTopUserInterfaceInvokeInfo" resultType="com.panda.common.model.vo.UserInterfaceInvokeInfo">
+        select ii.name, uii.totalNum
+        from user_interface_info uii
+                 left join interface_info ii on uii.interfaceInfoId = ii.id
+        where uii.userId = #{userId}
+          and ii.isDelete = 0
+        order by uii.totalNum desc
+        limit #{limit};
     </select>
 </mapper>

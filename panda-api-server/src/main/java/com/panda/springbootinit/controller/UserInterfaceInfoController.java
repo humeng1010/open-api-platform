@@ -12,9 +12,11 @@ import com.panda.common.model.dto.userInterfaceInfo.UserInterfaceInfoUpdateReque
 import com.panda.common.model.entity.User;
 import com.panda.common.model.entity.UserInterfaceInfo;
 import com.panda.common.model.vo.UserInterfaceInfoLeftCountVO;
+import com.panda.common.model.vo.UserInterfaceInvokeInfo;
 import com.panda.springbootinit.annotation.AuthCheck;
 import com.panda.springbootinit.exception.BusinessException;
 import com.panda.springbootinit.exception.ThrowUtils;
+import com.panda.springbootinit.mapper.UserInterfaceInfoMapper;
 import com.panda.springbootinit.service.UserInterfaceInfoService;
 import com.panda.springbootinit.service.UserService;
 import lombok.extern.slf4j.Slf4j;
@@ -23,6 +25,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 /**
  * 接口管理
@@ -73,9 +76,34 @@ public class UserInterfaceInfoController {
         Long userId = loginUser.getId();
         UserInterfaceInfo userInterfaceInfo = userInterfaceInfoService.query().select("totalNum", "leftNum").eq("userId", userId)
                 .eq("interfaceInfoId", interfaceInfoId).one();
-        
+
         UserInterfaceInfoLeftCountVO userInterfaceInfoLeftCountVO = BeanUtil.copyProperties(userInterfaceInfo, UserInterfaceInfoLeftCountVO.class);
         return ResultUtils.success(userInterfaceInfoLeftCountVO);
+    }
+
+    @Resource
+    private UserInterfaceInfoMapper userInterfaceInfoMapper;
+
+    /**
+     * 获取当前用户调用接口的排序好的次数 前10个
+     * 结果:
+     * 我可以知道您的名字(滑稽),104
+     * 随机获取一张狗狗的图片,45
+     * 随机笑话api,43
+     * 根据出生月份获取你的星座,25
+     * 今日天气,24
+     * 根据年份获取生肖(1900年之后的),14
+     *
+     * @param request 请求
+     * @return 结果
+     */
+    @GetMapping("/left/user")
+    public BaseResponse<List<UserInterfaceInvokeInfo>> getCurrentUserInterfaceInfoLeftCountStatistics(
+            HttpServletRequest request) {
+        User loginUser = userService.getLoginUser(request);
+        Long userId = loginUser.getId();
+        List<UserInterfaceInvokeInfo> userInterfaceInvokeInfos = userInterfaceInfoMapper.listTopUserInterfaceInvokeInfo(userId, 10);
+        return ResultUtils.success(userInterfaceInvokeInfos);
     }
 
     /**
